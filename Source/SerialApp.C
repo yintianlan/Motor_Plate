@@ -54,7 +54,7 @@ void SerialInterEvent(void)	interrupt	UART1_INTR
 		buff = SBUF;			// 接收数据
 		
 		SerialRcvBuff[SerialRcvCnt] = buff;
- 		SerialRcvCnt++;
+		SerialRcvCnt++;
 				
 		if((SerialRcvCnt >= 0x05) && (SerialRcvBuff[SerialRcvCnt - 5] == 0xFF)) {		// 数据接收正确
 			if((SerialRcvBuff[SerialRcvCnt - 4] == 0x10) && (SerialRcvBuff[SerialRcvCnt - 3] == 0x11)) {//协议格式正确

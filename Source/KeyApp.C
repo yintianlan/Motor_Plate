@@ -54,10 +54,10 @@ void CtlKeyHandle(void)
 			LED_State_Ctl(LED_ON);
 			break;
 		case 0x0201:			// 键弹起处理
-			if (mtRunCycle < CYCLE) {
-				mtRunCycle = mtRunCycle + (CYCLE/100)*10;//增加占空比
-			} else {
+			mtRunCycle = mtRunCycle + (CYCLE/100)*10;//增加占空比
+			if (mtRunCycle > CYCLE) {
 				mtRunCycle = CYCLE;	//PWM直接输出全高电平
+				printf("Warning: Motor Cycle Max!\r\n");
 			}
 			printf("Motor Cycle: %d\r\n", mtRunCycle);
 			Motor_Cycle_Set(&sMotorFirst, mtRunCycle);

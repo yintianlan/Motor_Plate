@@ -170,6 +170,7 @@ VARIABLECFG_GLOBAL 	uchar 	data 	mtRunDir;	//电机运行的方向
 /************************** 系统的变量 **************************************/
 VARIABLECFG_GLOBAL volatile	ulong  	uwTick;	//电机运行的方向
 
+VARIABLECFG_GLOBAL  uint 	data  	time10msCnt;	//10ms计数
 
 
 #endif

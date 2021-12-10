@@ -35,7 +35,7 @@ void main(void)
 	GlobalInterCtl(0);					// Disable Global Interrupt
 	HardWareInit();						// 系统硬件初始化
 	SoftWareInit();						// 各外设/模块变量初始化
-	SysPwrOnSetup();					// 系统上电初始化
+//	SysPwrOnSetup();					// 系统上电初始化
 	GlobalInterCtl(1);					// Enable Global Interrupt
 
 	#if Debug == 1
@@ -49,13 +49,12 @@ void main(void)
 	AT24C02DebugPrg();					// AT24C02 Debug
 	#endif
 	
-		
 	while(1) {
 		/************** 喂狗 **************************************/
 		if (_testbit_(WdtClrEnaFlag)) {	// Fed Dog
 			Wdt_Init();
 		}
-
+			
 #if 1
 		/************** 按键检测 **********************************/
 		if (KeyLockStatus == 0x00) {	// 按键没有完全被锁定, 可以扫描
@@ -73,11 +72,12 @@ void main(void)
 		}
 				
 		/************** LED控制 **********************************/
-//		LedBlinkPrg();					// LED闪烁
+		LedBlinkPrg();					// LED闪烁
 #endif
 		
 	}
 }
+
 
 /*
 ************************************************************************************************************************
@@ -89,7 +89,7 @@ void main(void)
 */
 void Wdt_Init(void)
 {
-    WDT_CONTR = FED_DOG_VAL;//配置看门狗分频值，清除看门狗，启动看门狗
+	WDT_CONTR = FED_DOG_VAL;//配置看门狗分频值，清除看门狗，启动看门狗
 
 	WdtClrEnaFlag = FALSE;
 	WdtClrCount	  = 0x00;
@@ -106,14 +106,15 @@ void Wdt_Init(void)
 void HardWareInit(void)
 {
 	HAL_GPIO_Init();	//IO初始化
-	MotorGpioInit();	//电机初始化
-	Timer0Init();		// Timer0/1 Init		 		
-	Timer1Init();
-//	EN_485 = SEND_OFF;	// 禁止发送
-	InitSerialBaudRate((ulong)(2400));		// Hard Serial Init
+//	MotorGpioInit();	//电机初始化
+	Timer0Init();		// Timer0 Init		 		
+//	Timer1Init();		// Timer1 Init
+	IO_RS485_EN = SEND_OFF;	// 禁止发送
+	InitSerialBaudRate((ulong)(115200));		// Hard Serial Init
+	IO_RS485_EN = SEND_ON;	// 开始发送
 //	u1Init();//串口1初始化
 
-	Wdt_Init();
+	Wdt_Init();	
 }
 
 /*

@@ -402,11 +402,6 @@
               <FilePath>..\Source\MotorDirver.C</FilePath>
             </File>
             <File>
-              <FileName>UartFunc.C</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Source\UartFunc.C</FilePath>
-            </File>
-            <File>
               <FileName>KeyApp.C</FileName>
               <FileType>1</FileType>
               <FilePath>..\Source\KeyApp.C</FilePath>
@@ -450,6 +445,16 @@
               <FileName>KeyFunc.C</FileName>
               <FileType>1</FileType>
               <FilePath>..\Source\KeyFunc.C</FilePath>
+            </File>
+            <File>
+              <FileName>STC8H_PWM.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Source\STC8H_PWM.C</FilePath>
+            </File>
+            <File>
+              <FileName>UartFunc.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Source\UartFunc.C</FilePath>
             </File>
           </Files>
         </Group>

@@ -11,19 +11,64 @@
 //========================================================================
 #define	_STC_PWM_GLOBAL_
 
-#include "STC_PWM.H"
 #include <STC8H.h>
+#include "STC8H_PWM.H"
 #include "HardWare.H"
 
 
-
 /* IO口定义 */
+sbit PWM0=P3^7;
+sbit PWM1=P2^1;
 sbit PWM2=P3^7;
 sbit PWM3=P2^1;
 sbit PWM4=P2^2;
 sbit PWM5=P2^3;
 sbit PWM6=P1^6;
 sbit PWM7=P1^7;
+
+/* PWM 配置寄存器 */
+//sfr     P_SW2       =   0xba;
+sfr     PWMCFG      =   0xf1;
+sfr     PWMIF       =   0xf6;
+sfr     PWMFDCR     =   0xf7;
+sfr     PWMCR       =   0xfe;
+
+/* PWM 各通道寄存器 */
+#define PWMC            (*(unsigned int volatile xdata *)0xfff0)
+#define PWMCKS          (*(unsigned char volatile xdata *)0xfff2)
+#define TADCP           (*(unsigned int volatile xdata *)0xfff3)
+#define PWM0T1          (*(unsigned int volatile xdata *)0xff00)
+#define PWM0T2          (*(unsigned int volatile xdata *)0xff02)
+#define PWM0CR          (*(unsigned char volatile xdata *)0xff04)
+#define PWM0HLD         (*(unsigned char volatile xdata *)0xff05)
+#define PWM1T1          (*(unsigned int volatile xdata *)0xff10)
+#define PWM1T2          (*(unsigned int volatile xdata *)0xff12)
+#define PWM1CR          (*(unsigned char volatile xdata *)0xff14)
+#define PWM1HLD         (*(unsigned char volatile xdata *)0xff15)
+#define PWM2T1          (*(unsigned int volatile xdata *)0xff20)
+#define PWM2T2          (*(unsigned int volatile xdata *)0xff22)
+#define PWM2CR          (*(unsigned char volatile xdata *)0xff24)
+#define PWM2HLD         (*(unsigned char volatile xdata *)0xff25)
+#define PWM3T1          (*(unsigned int volatile xdata *)0xff30)
+#define PWM3T2          (*(unsigned int volatile xdata *)0xff32)
+#define PWM3CR          (*(unsigned char volatile xdata *)0xff34)
+#define PWM3HLD         (*(unsigned char volatile xdata *)0xff35)
+#define PWM4T1          (*(unsigned int volatile xdata *)0xff40)
+#define PWM4T2          (*(unsigned int volatile xdata *)0xff42)
+#define PWM4CR          (*(unsigned char volatile xdata *)0xff44)
+#define PWM4HLD         (*(unsigned char volatile xdata *)0xff45)
+#define PWM5T1          (*(unsigned int volatile xdata *)0xff50)
+#define PWM5T2          (*(unsigned int volatile xdata *)0xff52)
+#define PWM5CR          (*(unsigned char volatile xdata *)0xff54)
+#define PWM5HLD         (*(unsigned char volatile xdata *)0xff55)
+#define PWM6T1          (*(unsigned int volatile xdata *)0xff60)
+#define PWM6T2          (*(unsigned int volatile xdata *)0xff62)
+#define PWM6CR          (*(unsigned char volatile xdata *)0xff64)
+#define PWM6HLD         (*(unsigned char volatile xdata *)0xff65)
+#define PWM7T1          (*(unsigned int volatile xdata *)0xff70)
+#define PWM7T2          (*(unsigned int volatile xdata *)0xff72)
+#define PWM7CR          (*(unsigned char volatile xdata *)0xff74)
+#define PWM7HLD         (*(unsigned char volatile xdata *)0xff75)
 
 
 /************************	功能说明	************************
@@ -95,6 +140,29 @@ void PWM_config(void)
 }
 
 
+//void pwm2_set_duty(unsigned int DUTY)           //PWM2
+//{
+//	if (DUTY==0)
+//	{
+//		PWMCR &=~0x01;
+//		PWM2=0;
+//	}
+//	else if (DUTY==100)
+//	{
+//		PWMCR &=~0x01;
+//		PWM2=1;
+//	}
+//	else
+//	{
+//		P_SW2 |= 0x80;                  //使能访问PWM在扩展RAM区的特殊功能寄存器XSFR
+//		PWM2T1 = 0x0001;                //设置PWM2第1次反转的PWM计数
+//		PWM2T2 = CYCLE * DUTY / 100;    //设置PWM2第2次反转的PWM计数
+//		P_SW2 &=~ 0x80;                 //占空比为(PWM2T2-PWM2T1)/PWMC
+//		PWMCR |= 0x01;                  //使能PWM信号输出
+//	}	
+//}
+
+
 //========================================================================
 // 函数: void PWM2_SetPwmWide(unsigned int Wide)
 // 描述: PWM2配置函数
@@ -121,28 +189,6 @@ void PWM2_SetPwmWide(unsigned int Wide)           //PWM2
         PWMCR |= 0x01;                  //使能PWM2信号输出
     }
 }
-
-//void pwm2_set_duty(unsigned int DUTY)           //PWM2
-//{
-//	if (DUTY==0)
-//	{
-//		PWMCR &=~0x01;
-//		PWM2=0;
-//	}
-//	else if (DUTY==100)
-//	{
-//		PWMCR &=~0x01;
-//		PWM2=1;
-//	}
-//	else
-//	{
-//		P_SW2 |= 0x80;                  //使能访问PWM在扩展RAM区的特殊功能寄存器XSFR
-//		PWM2T1 = 0x0001;                //设置PWM2第1次反转的PWM计数
-//		PWM2T2 = CYCLE * DUTY / 100;    //设置PWM2第2次反转的PWM计数
-//		P_SW2 &=~ 0x80;                 //占空比为(PWM2T2-PWM2T1)/PWMC
-//		PWMCR |= 0x01;                  //使能PWM信号输出
-//	}	
-//}
 
 //========================================================================
 // 函数: void PWM3_SetPwmWide(unsigned short Wide)

@@ -30,6 +30,8 @@ PUBLIC_GLOBAL	void LED_Toggle(void);
 PUBLIC_GLOBAL	void ResetUserTimer(ulong *Timer);
 PUBLIC_GLOBAL	ulong ReadUserTimer(ulong *Timer);
 
+PUBLIC_GLOBAL	void LED_Double_Color(uchar color);
+PUBLIC_GLOBAL	void LedBlinkPrg(void);
 
 #endif
 	

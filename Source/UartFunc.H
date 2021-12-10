@@ -16,10 +16,17 @@
 #endif
 	
 UART_GLOBAL	uchar xdata u1RecBuf[256];
+UART_GLOBAL	uchar xdata u2RecBuf[256];
+
 UART_GLOBAL	uint rec_cnt;
+UART_GLOBAL	uint u2rec_cnt;
+
 UART_GLOBAL	volatile uchar u1busy;
+UART_GLOBAL	volatile uchar u2busy;
+
 
 void uart1_init(ulong BAUD);
+void uart2_init(ulong BAUD);
 	
 void u1Init(void);	//115200bps@11.0592MHz
 void u2Init(void);	//115200bps@11.0592MHz

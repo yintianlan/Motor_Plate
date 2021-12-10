@@ -13,6 +13,7 @@
 #include "HardWare.H"
 #include "VariableCfg.H"
 #include "Public.h"
+#include "GpioDefine.H"
 
 
 /*
@@ -27,6 +28,8 @@ void TimerVarInit(void)
 {
 	Timer0IntrSum 	= 0x00;
 	Timer0InterFlag	= 0x00;
+	
+	time10msCnt 	= 0x00;
 }
 
 /*
@@ -49,32 +52,33 @@ void TimerVarInit(void)
 //	ET0=1;		//定时器0允许T0中断	
 //}
 
-//void Timer0Init(void)		//1毫秒@11.0592MHz
-//{
-//	AUXR |= 0x80;		//定时器时钟1T模式
-//	TMOD &= 0xF0;		//设置定时器模式，模式0(16位自动重装定时器)
-//	TL0 = 0xCD;		//设置定时初始值
-//	TH0 = 0xD4;		//设置定时初始值
-//	TF0 = 0;		//清除TF0标志
-//	TR0 = 1;		//定时器0开始计时
-
-//	ET0=1;		//定时器0允许T0中断	
-//}
-
-void Timer0Init(void)		//10毫秒@11.0592MHz
+void Timer0Init(void)		//1毫秒@11.0592MHz
 {
-	AUXR &= 0x7F;		//定时器时钟12T模式
-	TMOD &= 0xF0;		//设置定时器模式
-	TMOD |= 0x01;		//设置定时器模式，模式1(16位不可重装载)
-//	TL0 = 0x00;		//设置定时初始值
-//	TH0 = 0xDC;		//设置定时初始值
-	TL0 = T0_10MS;		//设置定时初始值
-	TH0 = T0_10MS >> 8;	//设置定时初始值
+	AUXR |= 0x80;		//定时器时钟1T模式
+	TMOD &= 0xF0;		//设置定时器模式，模式0(16位自动重装定时器)
+//	TMOD |= 0x01;		//设置定时器模式，模式1(16位不可重装载)
+	TL0 = T0COUNTER;		//设置定时初始值
+	TH0 = T0COUNTER >> 8;;		//设置定时初始值
 	TF0 = 0;		//清除TF0标志
 	TR0 = 1;		//定时器0开始计时
-	
+
 	ET0=1;		//定时器0允许T0中断	
 }
+
+//void Timer0Init(void)		//10毫秒@11.0592MHz
+//{
+//	AUXR &= 0x7F;		//定时器时钟12T模式
+//	TMOD &= 0xF0;		//设置定时器模式,低4位控制定时器0
+//	TMOD |= 0x01;		//设置定时器模式，模式1(16位不可重装载)
+////	TL0 = 0x00;		//设置定时初始值
+////	TH0 = 0xDC;		//设置定时初始值
+//	TL0 = T0_10MS;		//设置定时初始值
+//	TH0 = T0_10MS >> 8;	//设置定时初始值
+//	TF0 = 0;		//清除TF0标志
+//	TR0 = 1;		//定时器0开始计时
+//	
+//	ET0=1;		//定时器0允许T0中断	
+//}
 
 /*
 ************************************************************************************************************************
@@ -89,7 +93,7 @@ void Timer1Init(void)		//1毫秒@11.0592MHz
 	AUXR |= 0x40;		//定时器时钟1T模式
 //  AUXR &= 0xdf;       //定时器1为12T模式
 	TMOD &= 0x0F;		//设置定时器模式,高4位控制定时器1
-	TMOD |= 0x10;		//设置定时器模式,模式1(16位不可重装载)
+//	TMOD |= 0x10;		//设置定时器模式,模式1(16位不可重装载)
 //	TL1 = 0xCD;			//设置定时初始值
 //	TH1 = 0xD4;			//设置定时初始值
     TL1 = T1COUNTER;    //初始化计时值,设置定时初始值
@@ -110,24 +114,38 @@ void Timer1Init(void)		//1毫秒@11.0592MHz
 */
 void Timer0InterIsr(void)	interrupt TIMER0_INTR
 {
-	STOP_TIMER0();					//暂停T0
-	TL0 = (uchar)(T0_10MS);			//重装载计时值
-	TH0 = (uchar)(T0_10MS >> 8);	//重装载计时值
+//	STOP_TIMER0();					//暂停T0
+//	TL0 = (uchar)(T0_10MS);			//重装载计时值
+//	TH0 = (uchar)(T0_10MS >> 8);	//重装载计时值
 	
-	KeyDelay10Ms++;		// 长按计数器
+	uwTick++;			//System Tick
 
-	// ------------------LED 闪烁-----------------------------
-	if (LedStartBlink) {
-		LedBlinkCnt++;
-	}
+	if(KeyKeepMs)		//按键保持时间
+		KeyKeepMs--;
+	
+	if(mtRunTimCnt)		//电机运行时间
+		mtRunTimCnt--;
+		
+	if((++time10msCnt) >= 10) {
+		time10msCnt		= 0x00;
+		KeyDelay10Ms++;	// 长按计数器
 
-	// Watch Dog
-	if ((++WdtClrCount) >= 100) {
-		WdtClrEnaFlag 	= TRUE;
-		WdtClrCount		= 0x00;
+		// ------------------LED 闪烁-----------------------------
+		if (LedStartBlink) {
+			LedBlinkCnt++;
+		}
+
+		// Watch Dog
+		if ((++WdtClrCount) >= 100) {
+			WdtClrEnaFlag 	= TRUE;
+			WdtClrCount		= 0x00;
+		}
+
 	}
 	
-	START_TIMER0();					//启动T0
+	IO_KEY_LED = !IO_KEY_LED;
+	
+//	START_TIMER0();					//启动T0
 }
 
 /*
@@ -135,25 +153,25 @@ void Timer0InterIsr(void)	interrupt TIMER0_INTR
 **函数原型:  	void Timer1InterIsr(void)	interrupt TIMER1_INTR                    
 **参数说明:  	无
 **返回值:    	无
-**说明:			TIMER1中断ISR，1ms触发一次
+**说明:			TIMER1中断ISR，1ms触发一次，使用自动装载模式，减少开关定时器使定时更精准
 ************************************************************************************************************************
 */
-void Timer1InterIsr(void)	interrupt TIMER1_INTR
-{
-	STOP_TIMER1();					//暂停T1
-    TL1 = (uchar)(T1COUNTER);       //重装载计时值
-    TH1 = (uchar)(T1COUNTER >> 8);
-		
-	if(mtRunTimCnt)
-		mtRunTimCnt--;
-	
-	if(KeyKeepMs)
-		KeyKeepMs--;
-	
-	uwTick++;
-		
-	START_TIMER1();					//启动T1
-}
+//void Timer1InterIsr(void)	interrupt TIMER1_INTR
+//{
+//	STOP_TIMER1();					//暂停T1
+//    TL1 = (uchar)(T1COUNTER);       //重装载计时值
+//    TH1 = (uchar)(T1COUNTER >> 8);
+//		
+//	if(mtRunTimCnt)
+//		mtRunTimCnt--;
+//	
+//	if(KeyKeepMs)
+//		KeyKeepMs--;
+//	
+//	uwTick++;
+//	
+//	START_TIMER1();					//启动T1
+//}
 
 
 #endif

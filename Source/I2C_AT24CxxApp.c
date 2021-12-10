@@ -4,7 +4,6 @@
 
 #include "Public.h"
 #include "AT24C01_02.H"
-#include "UartFunc.H"
 #include "HardWare.H"
 
 
@@ -61,16 +60,16 @@ void AT24C02_Test(void)
 	for(i = 0; i < 20; i++)
 	{
 		test_data[i] = 0x00;
-		u1SendByte(test_data[i]);
-//		printf("%02bX ", test_data[i]);
+//		u1SendByte(test_data[i]);
+		printf("%02bX ", test_data[i]);
 	}
 	
 	//连续读取20个字节数据
 	RdFromROM(SlaveADDR, 0x05, test_data, 20);
 	for(i = 0; i < 20; i++)
 	{
-		u1SendByte(test_data[i]);
-//		printf("%02bX ", test_data[i]);
+//		u1SendByte(test_data[i]);
+		printf("%02bX ", test_data[i]);
 	}	
 }
 
@@ -88,8 +87,8 @@ void AT24C02_DebugPrg(void)
 	}
 	for (i = 0; i < 5; i++) {
 		RdFromROM(SlaveADDR, DEBUG_ADDR + i, &icdata, 1);
-		u1SendByte(icdata);
-//		printf("0x%02X ", icdata);
+//		u1SendByte(icdata);
+		printf("0x%02X ", icdata);
 	}
 }
 

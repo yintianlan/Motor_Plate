@@ -34,7 +34,7 @@
 #define IO_HW2 		P32	//红外对射
 #define IO_XSP 		P33	//控制12V电压...
 
-#define IO_RS485_RE	P35	//485方向控制
+#define IO_RS485_EN	P35	//485方向控制
 #define IO_RS485_RX	P36	//485串口接收
 #define IO_RS485_TX	P37	//485串口发送
 
