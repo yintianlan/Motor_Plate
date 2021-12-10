@@ -20,6 +20,8 @@
 #include "MotorDirver.H"
 #include "AT24C01_02.H"
 #include "SerialApp.H"
+#include "Led.H"
+#include "ADC.H"
 
 
 
@@ -73,6 +75,10 @@ void main(void)
 				
 		/************** LED控制 **********************************/
 		LedBlinkPrg();					// LED闪烁
+		
+		/************** ADC电压采样 *******************************/
+		Read_VoltageValue();			// 读取电压值
+
 #endif
 		
 	}
@@ -111,9 +117,8 @@ void HardWareInit(void)
 //	Timer1Init();		// Timer1 Init
 	IO_RS485_EN = SEND_OFF;	// 禁止发送
 	InitSerialBaudRate((ulong)(115200));		// Hard Serial Init
-	IO_RS485_EN = SEND_ON;	// 开始发送
-//	u1Init();//串口1初始化
-
+	ADC_Init();		// ADC Init
+	
 	Wdt_Init();	
 }
 
@@ -143,6 +148,7 @@ void SoftWareInit(void)
 	KeyVarInit();			// Key Variable Init
 	TimerVarInit();			// Timer Variable Init
 	SerialVarInit();		// Serial Variable Init
+	ADCVarInit();			//ADC参数初始化
 	MainVarInit();
 }
 

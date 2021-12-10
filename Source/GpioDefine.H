@@ -16,8 +16,8 @@
 #define SDA 		P24	//I2C SDA
 #define SCL 		P25	//I2C CLK
 
-#define IO_LED_R	P26 //双色LED RED
-#define IO_LED_B	P27 //双色LED BLUE
+#define IO_LED_B	P26 //双色LED BLUE/GREEN
+#define IO_LED_R	P27 //双色LED RED
 
 #define IO_JC_AD	P00	//检测电机驱动的AD
 #define IO_KEY_AD 	P01	//按键AD

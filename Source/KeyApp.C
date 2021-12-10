@@ -12,6 +12,7 @@
 #include "STC8H_PWM.H"
 #include "Public.h"
 #include "MotorDirver.H"
+#include "Led.H"
 
 
 /*
@@ -51,7 +52,7 @@ void CtlKeyHandle(void)
 {
 	switch (KeyValue) {
 		case 0x0101:			// 键按下处理
-			LED_State_Ctl(LED_ON);
+			LedDisplayPrg(KEY_LED, KEY_LED_ON);
 			break;
 		case 0x0201:			// 键弹起处理
 			mtRunCycle = mtRunCycle + (CYCLE/100)*10;//增加占空比
@@ -63,17 +64,17 @@ void CtlKeyHandle(void)
 			Motor_Cycle_Set(&sMotorFirst, mtRunCycle);
 			Motor_Cycle_Set(&sMotorSecond, mtRunCycle);
 			
-			LED_State_Ctl(LED_OFF);			// 灭灯
+			LedDisplayPrg(KEY_LED, KEY_LED_OFF);	// 灭灯
 			break;
 		case 0x8001:			// 长按按下处理
-			LED_State_Ctl(LED_ON);
+			LedDisplayPrg(KEY_LED, KEY_LED_ON);
 			break;
 		case 0x7001:			// 长按弹起处理
 			mtRunCycle = 0;		//输出全低电平
 			Motor_Cycle_Set(&sMotorFirst, mtRunCycle);
 			Motor_Cycle_Set(&sMotorSecond, mtRunCycle);
 			
-			LED_State_Ctl(LED_OFF);			// 灭灯
+			LedDisplayPrg(KEY_LED, KEY_LED_OFF);	// 灭灯
 			break;
 		default :
 			break;
@@ -93,7 +94,7 @@ void Ctl2KeyHandle(void)
 {
 	switch (KeyValue) {
 		case 0x0102:			// 键按下处理
-			LED_State_Ctl(LED_ON);
+			LedDisplayPrg(KEY_LED, KEY_LED_ON);
 			break;
 		case 0x0202:			// 键弹起处理
 			if (mtRunDir < 0x02) {
@@ -105,14 +106,14 @@ void Ctl2KeyHandle(void)
 			Motor_Dir_Set(&sMotorFirst, mtRunDir);
 			Motor_Dir_Set(&sMotorSecond, mtRunDir);
 		
-			LED_State_Ctl(LED_OFF);			// 灭灯
+			LedDisplayPrg(KEY_LED, KEY_LED_OFF);	// 灭灯
 			break;
 		case 0x8002:			// 长按按下处理
-			LED_State_Ctl(LED_ON);
+			LedDisplayPrg(KEY_LED, KEY_LED_ON);
 			break;
 		case 0x7002:			// 长按弹起处理
 			
-			LED_State_Ctl(LED_OFF);			// 灭灯
+			LedDisplayPrg(KEY_LED, KEY_LED_OFF);	// 灭灯
 			break;
 		default :
 			break;

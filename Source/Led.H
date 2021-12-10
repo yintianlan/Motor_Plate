@@ -1,5 +1,5 @@
-#ifndef ___PUBLIC_H__
-#define ___PUBLIC_H__
+#ifndef __LED_H__
+#define __LED_H__
 
 #include "Typedef.h"
 
@@ -9,23 +9,25 @@
 * 						变量及函数的引用定义
 ********************************************************************************************************************
 */
-#ifndef _PUBLIC_GLOBAL_
-	#define	PUBLIC_GLOBAL	extern
+#ifndef _LED_GLOBAL_
+	#define	LED_GLOBAL	extern
 #else
-	#define	PUBLIC_GLOBAL
+	#define	LED_GLOBAL
 #endif
 
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
 
 /*
 ************************************************************************************
 * 						函数定义
 ************************************************************************************
 */
-PUBLIC_GLOBAL	void HAL_GPIO_Init(void);
-PUBLIC_GLOBAL	void ResetUserTimer(ulong *Timer);
-PUBLIC_GLOBAL	ulong ReadUserTimer(ulong *Timer);
+LED_GLOBAL	void LED_Key_Ctl(uchar state);
+LED_GLOBAL	void LED_Key_Toggle(void);
+LED_GLOBAL	void LED_System_Ctl(uchar color);
+LED_GLOBAL	void LED_COM_Ctl(uchar state);
+LED_GLOBAL	void LED_LINK_Ctl(uchar state);
+	
+LED_GLOBAL	void LedDisplayPrg(uchar LedMode, uchar LedSta);
+LED_GLOBAL	void LedBlinkPrg(void);
 
 #endif
-	

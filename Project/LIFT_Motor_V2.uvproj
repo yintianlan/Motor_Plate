@@ -416,6 +416,11 @@
               <FileType>1</FileType>
               <FilePath>..\Source\I2C_AT24CxxApp.c</FilePath>
             </File>
+            <File>
+              <FileName>Led.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Source\Led.C</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -455,6 +460,11 @@
               <FileName>UartFunc.C</FileName>
               <FileType>1</FileType>
               <FilePath>..\Source\UartFunc.C</FilePath>
+            </File>
+            <File>
+              <FileName>ADC.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Source\ADC.C</FilePath>
             </File>
           </Files>
         </Group>

@@ -67,13 +67,27 @@
 
 
 // ----------------- LED显示状态 --------------------------------
-#define		LED_ON		0	//输出低电平点亮LED灯
-#define		LED_OFF		1
+#define		SYSTEM_LED		0x00	//系统指示灯-双色灯
+#define		KEY_LED			0x01	//按键指示灯
+#define		COM_LED			0x02	//通信指示灯
+#define		LINK_LED		0x03	//连接指示灯
 
 #define		LED_W		0x00	//双色灯：白色
 #define		LED_R		0x01	//双色灯：红色
-#define		LED_B		0x02	//双色灯：蓝色
+#define		LED_B		0x02	//双色灯：蓝/绿色
 #define		LED_Y		0x03	//双色灯：黄色
+
+#define		SYSTEM_LED_ON		1	//输出高电平点亮LED灯
+#define		SYSTEM_LED_OFF		0
+
+#define		KEY_LED_ON			1	//输出高电平点亮LED灯
+#define		KEY_LED_OFF			0
+
+#define		COM_LED_ON			0	//输出低电平点亮LED灯
+#define		COM_LED_OFF			1
+
+#define		LINK_LED_ON			0	//输出低电平点亮LED灯
+#define		LINK_LED_OFF		1
 
 
 // ----------------- 电机运行速度 --------------------------------

@@ -12,7 +12,6 @@
 #include "GpioDefine.H"
 #include "UartFunc.H"
 
-#include <stdio.h>
 
 
 //实现打印函数
@@ -56,30 +55,6 @@ void HAL_GPIO_Init(void)
 	P5M1=0x20; //0010 0000
 }
 
-/*
-************************************************************************************************************************
-**函数原型:  	void LED_State_Ctl(uchar state)           
-**参数说明:  	state :控制LED的开关
-**返回值:    	无
-**说明:			无
-************************************************************************************************************************
-*/
-void LED_State_Ctl(uchar state)
-{
-	IO_KEY_LED = state;
-}
-
-/*****************************************************************************
-**Name:		 	LED_Toggle
-**Function:	 	控制LED状态反转
-**Args:		None
-**Return:	None
-******************************************************************************/
-void LED_Toggle(void)
-{
-	IO_KEY_LED = !IO_KEY_LED;
-}
-
 /**
   * @brief Provides a tick value in millisecond.
   * @retval tick value
@@ -88,6 +63,7 @@ ulong HAL_GetTick(void)
 {
   return uwTick;
 }
+
 /*****************************************************************************
 **Name:		 	ReadUserTimer
 **Function:	 	获取当前的滴答计数
@@ -98,6 +74,7 @@ void ResetUserTimer(ulong *Timer)
 {
 	*Timer = HAL_GetTick();
 }
+
 /*****************************************************************************
 **Name:		 	ReadUserTimer
 **Function:	 	读取当前系统的时间，返回（当前系统滴答计时-用户记录的时间数），
@@ -108,58 +85,6 @@ ulong ReadUserTimer(ulong *Timer)
 {
 	ulong tmp = HAL_GetTick();
 	return (*Timer <= tmp) ? (tmp - *Timer) : (0xFFFFFFFF - tmp + *Timer);
-}
-
-/*****************************************************************************
-**Name:		 	LED_Double_Color
-**Function:	 	控制双色灯的显示
-**Args:		LDE Color
-**Return:	None
-******************************************************************************/
-void LED_Double_Color(uchar color)
-{
-	switch(color){
-		case LED_W:
-				IO_LED_R = 0;	//无色（白色），灭
-				IO_LED_B = 0;			
-			break;
-
-		case LED_R:
-				IO_LED_R = 0;	//红色
-				IO_LED_B = 1;
-			break;
-
-		case LED_B:
-				IO_LED_R = 1;	//IO电平原因，红中带黄
-				IO_LED_B = 1;
-			break;
-		
-		case LED_Y:
-				IO_LED_R = 1;	//黄色
-				IO_LED_B = 0;
-			break;
-		
-		default :
-			break;		
-	}
-}
-
-/*****************************************************************************
-**Name:		 	LedBlinkPrg
-**Function:	 	控制led的显示
-**Args:		None
-**Return:	None
-******************************************************************************/
-void LedBlinkPrg(void)
-{
-	static ulong delayTmer;
-	
-	if(ReadUserTimer(&delayTmer) >= T_1S)
-	{
-		IO_LED_B = !IO_LED_B;
-		ResetUserTimer(&delayTmer);
-		printf("Rec: 0x%02bx\r\n", SerialRcvCnt);
-	}
 }
 
 
