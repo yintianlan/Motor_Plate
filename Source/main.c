@@ -37,20 +37,20 @@ void main(void)
 	GlobalInterCtl(0);					// Disable Global Interrupt
 	HardWareInit();						// 系统硬件初始化
 	SoftWareInit();						// 各外设/模块变量初始化
-//	SysPwrOnSetup();					// 系统上电初始化
+	SysPwrOnSetup();					// 系统上电初始化
 	GlobalInterCtl(1);					// Enable Global Interrupt
 
 	#if Debug == 1
 	printf("-------------------------------\r\n");
 	printf("app start.\r\n");
-	LED_State_Ctl(LED_ON);				//快速闪一下提示灯
+	LedDisplayPrg(SYSTEM_LED, LED_R);				//快速闪一下提示灯
 	DelayMs(200);
-	LED_State_Ctl(LED_OFF);
+	LedDisplayPrg(SYSTEM_LED, LED_W);
 
 	ee_Erase();
 	AT24C02DebugPrg();					// AT24C02 Debug
 	#endif
-	
+		
 	while(1) {
 		/************** 喂狗 **************************************/
 		if (_testbit_(WdtClrEnaFlag)) {	// Fed Dog
@@ -77,8 +77,7 @@ void main(void)
 		LedBlinkPrg();					// LED闪烁
 		
 		/************** ADC电压采样 *******************************/
-		Read_VoltageValue();			// 读取电压值
-
+//		Read_VoltageValue();			// 读取电压值
 #endif
 		
 	}
@@ -165,14 +164,22 @@ void SysPwrOnSetup(void)
 	uint id;
 	uchar temp;
 
+	//  -------------- 关闭LED --------------------------------
+	LedDisplayPrg(SYSTEM_LED, LED_W);
+	LedDisplayPrg(KEY_LED, KEY_LED_OFF);
+	LedDisplayPrg(COM_LED, COM_LED_OFF);
+	LedDisplayPrg(LINK_LED, LINK_LED_OFF);
+
 	//  --------------从24C02中读取 相关信息--------------------------------
 
 	
+
+	
 	//  -------------- 补充功能 --------------------------------
-	sMotorFirst.Mode = RUN;
-	sMotorSecond.Mode = RUN;
-	MotorEnCtl(&sMotorFirst);	//使能驱动电机IC
-	MotorEnCtl(&sMotorSecond);
+//	sMotorFirst.Mode = RUN;
+//	sMotorSecond.Mode = RUN;
+//	MotorEnCtl(&sMotorFirst);	//使能驱动电机IC
+//	MotorEnCtl(&sMotorSecond);
 
 	mtRunDir = CW;
 	Motor_Dir_Set(&sMotorFirst, mtRunDir);//控制电机转动方向

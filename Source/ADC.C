@@ -35,37 +35,10 @@
 #include "Public.h"
 
 
-#define Cal_MODE    0   //每次测量只读1次ADC. 分辨率0.01V
-//#define Cal_MODE    1   //每次测量连续读16次ADC 再平均计算. 分辨率0.01V
+//#define Cal_MODE    0   //每次测量只读1次ADC. 分辨率0.01V
+#define Cal_MODE    1   //每次测量连续读16次ADC 再平均计算. 分辨率0.01V
 
 #define	ADC_USER_MAX		3	//用户使用最大ADC通道数
-
-
-typedef enum	//ADC通道
-{
-	ADC0 = 0,	//	ADC0
-	ADC1,
-	ADC2,
-	ADC3_NONE,
-	ADC4_NONE,
-	ADC5_NONE,
-	ADC6,
-	ADC7,
-	ADC8,
-	ADC9,
-	ADC10,
-	ADC11,
-	ADC12,
-	ADC13,
-	ADC14,
-	ADC_REF,	//ADC_VRef
-}eAdcChn;
-
-typedef struct {
-	eAdcChn	adcChn;			// adc通道
-	ulong	adcSampleVal;	// adc采样值, 用于计算
-	uint	adcValue;		// adc实际值*100, 测电压分辨率0.01V
-}AdcChnSampleStruct;
 
 //结构
 AdcChnSampleStruct   AdcSameple[ADC_USER_MAX];			// adc 通道采集数据
@@ -118,7 +91,7 @@ void ADC_Init(void)
 }
 
 //========================================================================
-// 函数: u16 Get_ADC12bitResult(u8 channel)
+// 函数: uint Get_ADC12bitResult(uchar channel)
 // 描述: 查询法读一次ADC结果.
 // 参数: channel: 选择要转换的ADC.
 // 返回: 12位ADC结果.
@@ -141,6 +114,71 @@ uint Get_ADC12bitResult(uchar channel)  //channel = 0~15
 }
 
 //========================================================================
+// 函数: uint Get_VoltageValue(uchar adcChn)
+// 描述: 返回读取一次的ADC结果.
+// 参数: channel: 选择要转换的ADC.
+// 返回: 12位ADC结果, 是换算过后的ADC值，大小为实际值*100.
+// 版本: V1.0, 2021-12-10
+//========================================================================
+//uint Get_VoltageValue(uchar adcChn)
+//{
+//	uchar chn = 0;	//通道索引
+//    uint j = 0;		//计算的AD值
+//	uint Bandgap = 0;//内部基准ADC
+//	
+//	//=================== 只读1次ADC, 12bit ADC. 分辨率0.01V ===============================
+//	//Get_ADC12bitResult(15);  			//先读一次并丢弃结果, 让内部的采样电容的电压等于输入值.
+//	Bandgap = Get_ADC12bitResult(15);   //读内部基准ADC, 读15通道
+//	for(chn = 0; chn < ADC_USER_MAX; chn++)
+//	{
+//		if(AdcSameple[chn].adcChn == adcChn)//当前需要读取的通道
+//		{
+//			AdcSameple[chn].adcSampleVal = Get_ADC12bitResult(AdcSameple[chn].adcChn);  //读外部电压ADC
+//			if(AdcSameple[chn].adcSampleVal < 4096)	//参数0~15,查询方式做一次ADC, 返回值就是结果, == 4096 为错误
+//				AdcSameple[chn].adcValue = (uint)(AdcSameple[chn].adcSampleVal * 119 / Bandgap);//计算外部电压, Bandgap为1.19V, 测电压分辨率0.01V
+//			return AdcSameple[chn].adcValue;
+//		}
+//	}
+//	
+//	return 0;
+//}
+
+/* 读取16次，取平均值 */
+uint Get_VoltageValue(uchar adcChn)
+{
+	uchar chn = 0;	//通道索引
+	uchar  i = 0;
+	uint j = 0;		//计算的AD值
+	uint Bandgap = 0;//内部基准ADC
+	
+	for(chn = 0; chn < ADC_USER_MAX; chn++)
+	{
+		if(AdcSameple[chn].adcChn == adcChn)//当前需要读取的通道
+		{
+			//Get_ADC12bitResult(15);  			//先读一次并丢弃结果, 让内部的采样电容的电压等于输入值.
+			for(j=0, i=0; i<16; i++)
+			{
+				j += Get_ADC12bitResult(15); 	//读内部基准ADC, 读15通道
+			}
+			Bandgap = j >> 4;   //16次平均
+			
+
+			AdcSameple[chn].adcSampleVal = 0;
+			for(i=0; i<16; i++)
+			{
+				AdcSameple[chn].adcSampleVal += Get_ADC12bitResult(AdcSameple[chn].adcChn);	//读外部电压ADC
+			}
+			AdcSameple[chn].adcSampleVal = AdcSameple[chn].adcSampleVal >> 4; 				//16次平均		
+			AdcSameple[chn].adcValue = (uint)(AdcSameple[chn].adcSampleVal * 119 / Bandgap);//计算外部电压, Bandgap为1.19V, 测电压分辨率0.01V
+			
+			return AdcSameple[chn].adcValue;
+		}
+	}
+	
+	return 0;
+}
+
+//========================================================================
 // 函数: void Read_VoltageValue(void)
 // 描述: 读取并计算.
 // 参数: 无.
@@ -154,7 +192,7 @@ void Read_VoltageValue(void)
     uchar  i = 0;
 #endif
 	uchar chn = 0;	//通道索引
-    uint j = 0;		//计算的AD值
+    ulong j = 0;		//计算的AD值
 	uint Bandgap = 0;//内部基准ADC
 
 	if(ReadUserTimer(&adcTmer) >= T_100MS * 10)		//Nms到
@@ -168,7 +206,7 @@ void Read_VoltageValue(void)
 		for(chn = 0; chn < ADC_USER_MAX; chn++)
 		{
 			AdcSameple[chn].adcSampleVal = Get_ADC12bitResult(AdcSameple[chn].adcChn);  	//读外部电压ADC
-			if(j < 4096)	//参数0~15,查询方式做一次ADC, 返回值就是结果, == 4096 为错误
+			if(AdcSameple[chn].adcSampleVal < 4096)	//参数0~15,查询方式做一次ADC, 返回值就是结果, == 4096 为错误
 				AdcSameple[chn].adcValue = (uint)(AdcSameple[chn].adcSampleVal * 119 / Bandgap);//计算外部电压, Bandgap为1.19V, 测电压分辨率0.01V
 		}
 	#endif

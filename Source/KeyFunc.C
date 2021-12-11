@@ -7,15 +7,30 @@
 *作者：   	宁雪玉
 ********************************************************************************************************************
 */
+/*************  功能说明    **************
+通过读取AD值判断按下的按键
+
+方法暂时不支持判断同时按下多个按键（组合按键）
+
+ADC读取会有误差，注意添加误差值
+
+******************************************/
 #define	_KEYFUNC_GLOBAL_
 
 #include "KeyFunc.H"
 #include "GpioDefine.H"
 #include "HardWare.H"
 #include "VariableCfg.H"
+#include "ADC.H"
 
 #include <stdio.h>  
 
+#define		ADC_ERROR_RANGE		10	// 误差允许值0.10V
+#define		ADC_KEY_NONE		490	// 无按键时的电压4.90V，以实际为准
+
+#define		ADC_KEY1_VAL		450	// 按键1按下时的电压值
+#define		ADC_KEY2_VAL		430	// 按键2按下时的电压值
+#define		ADC_KEY3_VAL		370	// 按键3按下时的电压值
 
 
 /*
@@ -26,29 +41,33 @@
 **说明:			Read Key Value          				   
 ************************************************************************************************************************
 */
-#if 0
-static uchar KeyReadPrg(void)
-{
-	uchar temp;
-		
-	GlobalInterCtl(0);
-	KeyReadPort |= 0xF0;
-	DELAY5US(); 
-	DELAY5US();
-	temp = (KeyReadPort | 0x9F);
-	DELAY5US();
-	GlobalInterCtl(1);
-	
-	return (~temp);
-}
-#endif
-
 static uchar KeyReadPrg(void)
 {
 	uchar temp = 0x00;
+	uint  value = 0x00;
 
-//	if(KEY1 == 0) {temp |= (1 << 0);}
-//	if(KEY2 == 0) {temp |= (1 << 1);}
+	value = Get_VoltageValue(ADC9);//读取ADC9的电压值	
+	
+	if(((ADC_KEY_NONE + ADC_ERROR_RANGE) > value) && \
+		((ADC_KEY_NONE - ADC_ERROR_RANGE)) < value ) 
+	{
+		temp = 0x00;	//无按键
+	} 
+	else if(((ADC_KEY1_VAL + ADC_ERROR_RANGE) > value) && \
+		(ADC_KEY1_VAL - ADC_ERROR_RANGE) < value ) 
+	{
+		temp |= (1 << 0);	//S1
+	}
+	else if(((ADC_KEY2_VAL + ADC_ERROR_RANGE) > value) && \
+		(ADC_KEY2_VAL - ADC_ERROR_RANGE) < value ) 
+	{
+		temp |= (1 << 1);	//S2
+	}
+	else if(((ADC_KEY3_VAL + ADC_ERROR_RANGE) > value) && \
+		(ADC_KEY3_VAL - ADC_ERROR_RANGE) < value ) 
+	{
+		temp |= (1 << 2);	//S3
+	}
 	
 	return (temp);
 }	
@@ -71,7 +90,7 @@ void KeyScanPrg(void)
 		printf("machine KeyValue: 0x%04x\r\n", KeyValue);
 		KeyValuePre = KeyValue;
 	}
-
+	
 	switch (KeyScanStatus) {
 		case 0:
 			if (KeyReadPrg() != 0x00) {				// 有键按下

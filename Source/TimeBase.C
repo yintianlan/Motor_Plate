@@ -140,11 +140,8 @@ void Timer0InterIsr(void)	interrupt TIMER0_INTR
 			WdtClrEnaFlag 	= TRUE;
 			WdtClrCount		= 0x00;
 		}
-
 	}
-	
-	IO_KEY_LED = !IO_KEY_LED;
-	
+		
 //	START_TIMER0();					//Æô¶¯T0
 }
 

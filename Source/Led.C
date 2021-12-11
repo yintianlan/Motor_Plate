@@ -162,8 +162,7 @@ void LedDisplayPrg(uchar LedMode, uchar LedSta)
 ******************************************************************************/
 void LedBlinkPrg(void)
 {
-	LedDisplayPrg(SYSTEM_LED, LED_Y);
-	LedDisplayPrg(KEY_LED, KEY_LED_ON);
+	LedDisplayPrg(SYSTEM_LED, LED_R);
 }
 
 #endif

@@ -16,6 +16,7 @@
 #endif
 
 
+
 /*
 ************************************************************************************
 * 						º¯Êý¶¨Òå
@@ -23,6 +24,7 @@
 */
 ADC_GLOBAL	void ADCVarInit(void);
 ADC_GLOBAL	void ADC_Init(void);
+ADC_GLOBAL	uint Get_VoltageValue(uchar adcChn);
 ADC_GLOBAL	void Read_VoltageValue(void);
 
 
