@@ -22,6 +22,8 @@
 #include "SerialApp.H"
 #include "Led.H"
 #include "ADC.H"
+#include "STC8H_PWM.H"
+#include "TravelSwitch.H"
 
 
 
@@ -78,6 +80,9 @@ void main(void)
 		
 		/************** ADC电压采样 *******************************/
 //		Read_VoltageValue();			// 读取电压值
+		
+		/************** 外部信号检测 *******************************/
+		TravelSwitchPrg();				//行程开关
 #endif
 		
 	}
@@ -111,7 +116,7 @@ void Wdt_Init(void)
 void HardWareInit(void)
 {
 	HAL_GPIO_Init();	//IO初始化
-//	MotorGpioInit();	//电机初始化
+	MotorGpioInit();	//电机初始化
 	Timer0Init();		// Timer0 Init		 		
 //	Timer1Init();		// Timer1 Init
 	IO_RS485_EN = SEND_OFF;	// 禁止发送

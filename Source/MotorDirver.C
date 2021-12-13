@@ -31,7 +31,7 @@ void MotorGpioInit(void)
 *******************************************************************************/
 void MotorVarInit(void)
 {
-	mtRunCycle = CYCLE/5;
+	mtRunCycle = MOTOR_CYCLE_4;
 	mtRunTimCnt = 0x00;
 	mtRunDir = STOP;
 	
@@ -99,23 +99,23 @@ void  Motor_First_Ctl(structMotorUnitInfo *motor) //端接电机1控制程序
 	
 	switch(motor->Dir) {
 		case CW:	//顺时针转动
-			PWM3_SetPwmWide(motor->Cycle);
-			PWM4_SetPwmWide(0);    	//输出全低电平
+			PWM8_SetPwmWide(motor->Cycle);
+			PWM7_SetPwmWide(0);    	//输出全低电平
 			break;
 		
 		case CCW:	//逆时针转动
-			PWM3_SetPwmWide(0);   	//输出全低电平
-			PWM4_SetPwmWide(motor->Cycle);
+			PWM8_SetPwmWide(0);   	//输出全低电平
+			PWM7_SetPwmWide(motor->Cycle);
 			break;
 		
 		case STOP:	//电机停止
-			PWM3_SetPwmWide(0);		//输出全低电平
-			PWM4_SetPwmWide(0);		//输出全低电平
+			PWM8_SetPwmWide(0);		//输出全低电平
+			PWM7_SetPwmWide(0);		//输出全低电平
 			break;
 		
 		case BREAK:	//刹车
-			PWM3_SetPwmWide(CYCLE);	//输出全高电平
-			PWM4_SetPwmWide(CYCLE);	//输出全高电平
+			PWM8_SetPwmWide(CYCLE);	//输出全高电平
+			PWM7_SetPwmWide(CYCLE);	//输出全高电平
 			break;
 
 		default:
@@ -136,23 +136,23 @@ void  Motor_Second_Ctl(structMotorUnitInfo *motor) //端接电机2控制程序
 	
 	switch(motor->Dir) {
 		case CW:	//顺时针转动
-			PWM5_SetPwmWide(motor->Cycle);
-			PWM6_SetPwmWide(0);    	//输出全低电平
+			PWM6_SetPwmWide(motor->Cycle);
+			PWM5_SetPwmWide(0);    	//输出全低电平
 			break;
 		
 		case CCW:	//逆时针转动
-			PWM5_SetPwmWide(0);   	//输出全低电平
-			PWM6_SetPwmWide(motor->Cycle);
+			PWM6_SetPwmWide(0);   	//输出全低电平
+			PWM5_SetPwmWide(motor->Cycle);
 			break;
 		
 		case STOP:	//电机停止
-			PWM5_SetPwmWide(0);		//输出全低电平
 			PWM6_SetPwmWide(0);		//输出全低电平
+			PWM5_SetPwmWide(0);		//输出全低电平
 			break;
 		
 		case BREAK:	//刹车
-			PWM5_SetPwmWide(CYCLE);	//输出全高电平
 			PWM6_SetPwmWide(CYCLE);	//输出全高电平
+			PWM5_SetPwmWide(CYCLE);	//输出全高电平
 			break;
 
 		default:
@@ -173,15 +173,15 @@ void MotorRunCtl(structMotorUnitInfo *motor)
 	{
 		if(motor->Dir == STOP) {		//电机停止
 //			IO_MT1=1;
-			PWM3_SetPwmWide(CYCLE);     //输出全高电平
+			PWM8_SetPwmWide(CYCLE);     //输出全高电平
 			IO_MT2=1;
 		} else if (motor->Dir == CCW) {	//逆时针方向
 //			IO_MT1=0;
-			PWM3_SetPwmWide(motor->Cycle);
+			PWM8_SetPwmWide(motor->Cycle);
 			IO_MT2=1;
 		} else  if (motor->Dir == CW){	//顺时针方向
 //			IO_MT1=1;
-			PWM3_SetPwmWide(motor->Cycle);
+			PWM8_SetPwmWide(motor->Cycle);
 			IO_MT2=0;
 		}
 	}
@@ -189,15 +189,15 @@ void MotorRunCtl(structMotorUnitInfo *motor)
 	{
 		if(motor->Dir == STOP) {		//电机停止
 //			IO_MT3=1;
-			PWM5_SetPwmWide(CYCLE);     //输出全高电平
+			PWM6_SetPwmWide(CYCLE);     //输出全高电平
 			IO_MT4=1;
 		} else if (motor->Dir == CCW) {	//逆时针方向
 //			IO_MT3=0;
-			PWM5_SetPwmWide(motor->Cycle);
+			PWM6_SetPwmWide(motor->Cycle);
 			IO_MT4=1;
 		} else  if (motor->Dir == CW){	//顺时针方向
 //			IO_MT3=1;
-			PWM5_SetPwmWide(motor->Cycle);
+			PWM6_SetPwmWide(motor->Cycle);
 			IO_MT4=0;
 		}	
 	}

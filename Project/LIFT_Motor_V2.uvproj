@@ -421,6 +421,11 @@
               <FileType>1</FileType>
               <FilePath>..\Source\Led.C</FilePath>
             </File>
+            <File>
+              <FileName>TravelSwitch.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Source\TravelSwitch.C</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

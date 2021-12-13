@@ -14,74 +14,54 @@
 #include <STC8H.h>
 #include "STC8H_PWM.H"
 #include "HardWare.H"
-
-
-/* IO口定义 */
-sbit PWM0=P3^7;
-sbit PWM1=P2^1;
-sbit PWM2=P3^7;
-sbit PWM3=P2^1;
-sbit PWM4=P2^2;
-sbit PWM5=P2^3;
-sbit PWM6=P1^6;
-sbit PWM7=P1^7;
-
-/* PWM 配置寄存器 */
-//sfr     P_SW2       =   0xba;
-sfr     PWMCFG      =   0xf1;
-sfr     PWMIF       =   0xf6;
-sfr     PWMFDCR     =   0xf7;
-sfr     PWMCR       =   0xfe;
-
-/* PWM 各通道寄存器 */
-#define PWMC            (*(unsigned int volatile xdata *)0xfff0)
-#define PWMCKS          (*(unsigned char volatile xdata *)0xfff2)
-#define TADCP           (*(unsigned int volatile xdata *)0xfff3)
-#define PWM0T1          (*(unsigned int volatile xdata *)0xff00)
-#define PWM0T2          (*(unsigned int volatile xdata *)0xff02)
-#define PWM0CR          (*(unsigned char volatile xdata *)0xff04)
-#define PWM0HLD         (*(unsigned char volatile xdata *)0xff05)
-#define PWM1T1          (*(unsigned int volatile xdata *)0xff10)
-#define PWM1T2          (*(unsigned int volatile xdata *)0xff12)
-#define PWM1CR          (*(unsigned char volatile xdata *)0xff14)
-#define PWM1HLD         (*(unsigned char volatile xdata *)0xff15)
-#define PWM2T1          (*(unsigned int volatile xdata *)0xff20)
-#define PWM2T2          (*(unsigned int volatile xdata *)0xff22)
-#define PWM2CR          (*(unsigned char volatile xdata *)0xff24)
-#define PWM2HLD         (*(unsigned char volatile xdata *)0xff25)
-#define PWM3T1          (*(unsigned int volatile xdata *)0xff30)
-#define PWM3T2          (*(unsigned int volatile xdata *)0xff32)
-#define PWM3CR          (*(unsigned char volatile xdata *)0xff34)
-#define PWM3HLD         (*(unsigned char volatile xdata *)0xff35)
-#define PWM4T1          (*(unsigned int volatile xdata *)0xff40)
-#define PWM4T2          (*(unsigned int volatile xdata *)0xff42)
-#define PWM4CR          (*(unsigned char volatile xdata *)0xff44)
-#define PWM4HLD         (*(unsigned char volatile xdata *)0xff45)
-#define PWM5T1          (*(unsigned int volatile xdata *)0xff50)
-#define PWM5T2          (*(unsigned int volatile xdata *)0xff52)
-#define PWM5CR          (*(unsigned char volatile xdata *)0xff54)
-#define PWM5HLD         (*(unsigned char volatile xdata *)0xff55)
-#define PWM6T1          (*(unsigned int volatile xdata *)0xff60)
-#define PWM6T2          (*(unsigned int volatile xdata *)0xff62)
-#define PWM6CR          (*(unsigned char volatile xdata *)0xff64)
-#define PWM6HLD         (*(unsigned char volatile xdata *)0xff65)
-#define PWM7T1          (*(unsigned int volatile xdata *)0xff70)
-#define PWM7T2          (*(unsigned int volatile xdata *)0xff72)
-#define PWM7CR          (*(unsigned char volatile xdata *)0xff74)
-#define PWM7HLD         (*(unsigned char volatile xdata *)0xff75)
+#include "GpioDefine.H"
 
 
 /************************	功能说明	************************
     PWM_config();				//配置PWM
 
-    PWM2_SetPwmWide(0);         //输出全低电平
-    PWM3_SetPwmWide(1);         //输出1/2550高电平
-    PWM4_SetPwmWide(CYCLE);     //输出全高电平
-    PWM5_SetPwmWide(CYCLE-1);   //输出2549/2550低电平
-    PWM6_SetPwmWide(CYCLE/2);   //输出1/2高电平
+    PWM5_SetPwmWide(0);         //输出全低电平
+    PWM5_SetPwmWide(1);         //输出1/CYCLE高电平
+    PWM6_SetPwmWide(CYCLE);     //输出全高电平
+    PWM6_SetPwmWide(CYCLE-1);   //输出(CYCLE-1)/CYCLE低电平
+    PWM7_SetPwmWide(CYCLE/2);   //输出1/2高电平
     PWM7_SetPwmWide(CYCLE/3);   //输出1/3高电平
 ************************	功能说明	************************/
 
+
+/*****************************************************************************/
+/* IO口定义 */
+sbit PWM5=P2^0;
+sbit PWM6=P2^1;
+sbit PWM7=P2^2;
+sbit PWM8=P2^3;
+
+/*****************************************************************************/
+/* PWM 配置IO */
+#define PWM5_1      0x00	//P2.0
+#define PWM5_2      0x01	//P1.7
+#define PWM5_3      0x02	//P0.0
+#define PWM5_4      0x03	//P7.4
+
+#define PWM6_1      0x00	//P2.1
+#define PWM6_2      0x04	//P5.4
+#define PWM6_3      0x08	//P0.1
+#define PWM6_4      0x0C	//P7.5
+
+#define PWM7_1      0x00	//P2.2
+#define PWM7_2      0x10	//P3.3
+#define PWM7_3      0x20	//P0.2
+#define PWM7_4      0x30	//P7.6
+
+#define PWM8_1      0x00	//P2.3
+#define PWM8_2      0x40	//P3.4
+#define PWM8_3      0x80	//P0.3
+#define PWM8_4      0xC0	//P7.7
+
+#define ENO5P       0x01
+#define ENO6P       0x04
+#define ENO7P       0x10
+#define ENO8P       0x40
 
 
 //========================================================================
@@ -91,158 +71,44 @@ sfr     PWMCR       =   0xfe;
 // 返回: none.
 //========================================================================
 void PWM_config(void)
-{
-//    P1M0 &= ~0xc0;
-//    P1M1 &= ~0xc0;
-//    P1 &= ~0xc0;                    //设置P1.6/.P1.7电平
+{	
+    P2M0 &= ~0x0f;
+    P2M1 &= ~0x0f;
+    P2 &= ~0x0f;                    //设置P2.0/P2.1/P2.2/P2.3电平
 
-    P1M0 &= ~0x40;
-    P1M1 &= ~0x40;
-    P1 &= ~0x40;                    //设置P1.6电平	
-	
-    P2M0 &= ~0x0e;
-    P2M1 &= ~0x0e;
-    P2 &= ~0x0e;                    //设置P2.1/P2.2/P2.3电平
-//    P3M0 &= ~0x80;
-//    P3M1 &= ~0x80;
-//    P3 &= ~0x80;                    //设置P3.7电平
-	
 	P_SW2 |= 0x80;					//使能访问XSFR，否则无法访问以下特殊寄存器
-	PWMCFG = 0x00;                  //配置PWM的输出初始电平为低电平，也就是第一次翻转前输出的电平
-	PWMCKS = 0x0f;                  //选择PWM的时钟为Fosc/(PS[3:0]+1)
-	PWMC = CYCLE;                   //设置PWM周期,定义PWM周期(最大值为32767)
+    PWMB_CCER1 = 0x00; //写 CCMRx 前必须先清零 CCxE 关闭通道
+    PWMB_CCER2 = 0x00;
+    PWMB_CCMR1 = 0x60; //通道模式配置,PWM模式1
+    PWMB_CCMR2 = 0x60;
+    PWMB_CCMR3 = 0x60;
+    PWMB_CCMR4 = 0x60;
 
-//	PWM2T1 = 1;               		//设置PWM2第1次反转的PWM计数,也就是电平第一次发生翻转的计数值 
-//	PWM2T2 = 0;						//设置PWM2第2次反转的PWM计数,PWM2T1与PWM2T2不能设置为相等的值，否则产生竞争
-//	PWM2CR = 0x00;                  //选择PWM2输出到P3.7,关闭PWM2中断   
+//    PWMB_CCER1 = 0x33; //配置通道5/6输出使能和极性（低电平有效）
+//    PWMB_CCER2 = 0x33; //配置通道7/8输出使能和极性（低电平有效）
+    PWMB_CCER1 = 0x11; //配置通道5/6输出使能和极性（高电平有效）
+    PWMB_CCER2 = 0x11; //配置通道7/8输出使能和极性（高电平有效）
+	
+//	PWMB_PSCRH = 0x00;      //选择PWM的时钟为fCK_PSC/(PSCR[15:0]+1)
+//	PWMB_PSCRL = 0x07;
 
-	PWM3T1 = 1;
-	PWM3T2 = 0;
-	PWM3CR = 0x00;                  //选择PWM3输出到P2.1,关闭PWM3中断
+	PWMB_ARR = CYCLE - 1;   //设置PWM周期,定义PWM周期计数为CYCLE
 
-	PWM4T1 = 1;
-	PWM4T2 = 0;         
-	PWM4CR = 0x00;                  //选择PWM4输出到P2.2,关闭PWM4中断
+    PWMB_ENO = 0x00;
+    PWMB_ENO |= ENO5P; //使能输出
+    PWMB_ENO |= ENO6P; //使能输出
+    PWMB_ENO |= ENO7P; //使能输出
+    PWMB_ENO |= ENO8P; //使能输出
 
-	PWM5T1 = 1;
-	PWM5T2 = 0;
-	PWM5CR = 0x00;                  //选择PWM4输出到P2.3,关闭PWM5中断
+	PWMB_PS = 0x00;    //高级 PWM 通道输出脚选择位
+    PWMB_PS |= PWM5_1; //选择 PWM5_1 通道
+    PWMB_PS |= PWM6_1; //选择 PWM6_1 通道
+    PWMB_PS |= PWM7_1; //选择 PWM7_1 通道
+    PWMB_PS |= PWM8_1; //选择 PWM8_1 通道
 
-	PWM6T1 = 1;
-	PWM6T2 = 0;
-	PWM6CR = 0x00;                  //选择PWM4输出到P1.6,关闭PWM6中断
-
-//	PWM7T1 = 1;
-//	PWM7T2 = 0;
-//	PWM7CR = 0x00;                  //选择PWM4输出到P1.7,关闭PWM7中断
-	PWMCR |= 0x80;                  //使能PWM模块
-	P_SW2 &=~0x80;					//关闭特殊功能寄存器XSFR
-}
-
-
-//void pwm2_set_duty(unsigned int DUTY)           //PWM2
-//{
-//	if (DUTY==0)
-//	{
-//		PWMCR &=~0x01;
-//		PWM2=0;
-//	}
-//	else if (DUTY==100)
-//	{
-//		PWMCR &=~0x01;
-//		PWM2=1;
-//	}
-//	else
-//	{
-//		P_SW2 |= 0x80;                  //使能访问PWM在扩展RAM区的特殊功能寄存器XSFR
-//		PWM2T1 = 0x0001;                //设置PWM2第1次反转的PWM计数
-//		PWM2T2 = CYCLE * DUTY / 100;    //设置PWM2第2次反转的PWM计数
-//		P_SW2 &=~ 0x80;                 //占空比为(PWM2T2-PWM2T1)/PWMC
-//		PWMCR |= 0x01;                  //使能PWM信号输出
-//	}	
-//}
-
-
-//========================================================================
-// 函数: void PWM2_SetPwmWide(unsigned int Wide)
-// 描述: PWM2配置函数
-// 参数: Wide:反转计数
-// 返回: none.
-//========================================================================
-void PWM2_SetPwmWide(unsigned int Wide)           //PWM2
-{
-    if (Wide == 0)
-    {
-        PWMCR &= ~0x01;
-        PWM2 = 0;
-    }
-    else if (Wide == CYCLE)
-    {
-        PWMCR &= ~0x01;
-        PWM2 = 1;
-    }
-    else
-    {
-        P_SW2 |= 0x80;                  //使能访问PWM在扩展RAM区的特殊功能寄存器XSFR
-        PWM2T1 = Wide;                	//设置PWM2第1次反转的PWM计数，占空比为(PWM2T2-PWM2T1)/PWMC
-        P_SW2 &= ~0x80;                 //关闭特殊功能寄存器XSFR
-        PWMCR |= 0x01;                  //使能PWM2信号输出
-    }
-}
-
-//========================================================================
-// 函数: void PWM3_SetPwmWide(unsigned short Wide)
-// 描述: PWM3配置函数
-// 参数: Wide:反转计数
-// 返回: none.
-//========================================================================
-void PWM3_SetPwmWide(unsigned short Wide)
-{
-    if (Wide == 0)
-    {
-        PWMCR &= ~0x02;
-        PWM3 = 0;
-    }
-    else if (Wide == CYCLE)
-    {
-        PWMCR &= ~0x02;
-        PWM3 = 1;
-    }
-    else
-    {
-        P_SW2 |= 0x80;
-        PWM3T1 = Wide;
-        P_SW2 &= ~0x80;
-        PWMCR |= 0x02;                  //使能PWM3信号输出
-    }
-}
-
-
-//========================================================================
-// 函数: void PWM4_SetPwmWide(unsigned short Wide)
-// 描述: PWM4配置函数
-// 参数: Wide:反转计数
-// 返回: none.
-//========================================================================
-void PWM4_SetPwmWide(unsigned short Wide)
-{
-    if (Wide == 0)
-    {
-        PWMCR &= ~0x04;
-        PWM4 = 0;
-    }
-    else if (Wide == CYCLE)
-    {
-        PWMCR &= ~0x04;
-        PWM4 = 1;
-    }
-    else
-    {
-        P_SW2 |= 0x80;
-        PWM4T1 = Wide;
-        P_SW2 &= ~0x80;
-        PWMCR |= 0x04;                  //使能PWM4信号输出
-    }
+    PWMB_BKR = 0x80;   //使能主输出
+    PWMB_CR1 |= 0x01;  //开始计时
+	P_SW2 &= 0x7f;					//关闭特殊功能寄存器XSFR
 }
 
 
@@ -256,20 +122,20 @@ void PWM5_SetPwmWide(unsigned short Wide)
 {
     if (Wide == 0)
     {
-        PWMCR &= ~0x08;
+		PWMB_ENO &= ~ENO5P; //禁止输出
         PWM5 = 0;
     }
-    else if (Wide == CYCLE)
+    else if (Wide >= (CYCLE - 1))
     {
-        PWMCR &= ~0x08;
+        PWMB_ENO &= ~ENO5P; //禁止输出
         PWM5 = 1;
     }
     else
     {
-        P_SW2 |= 0x80;
-        PWM5T1 = Wide;
-        P_SW2 &= ~0x80;
-        PWMCR |= 0x08;                  //使能PWM5信号输出
+        P_SW2 |= 0x80;      //使能访问PWM在扩展RAM区的特殊功能寄存器XSFR
+		PWMB_CCR5 = Wide;	//设置占空比时间
+        P_SW2 &= ~0x7f;
+        PWMB_ENO |= ENO5P;	//使能PWM5信号输出
     }
 }
 
@@ -284,20 +150,20 @@ void PWM6_SetPwmWide(unsigned short Wide)
 {
     if (Wide == 0)
     {
-        PWMCR &= ~0x10;
+		PWMB_ENO &= ~ENO6P; //禁止输出
         PWM6 = 0;
     }
-    else if (Wide == CYCLE)
+    else if (Wide >= (CYCLE - 1))
     {
-        PWMCR &= ~0x10;
+        PWMB_ENO &= ~ENO6P; //禁止输出
         PWM6 = 1;
     }
     else
     {
         P_SW2 |= 0x80;
-        PWM6T1 = Wide;
-        P_SW2 &= ~0x80;
-        PWMCR |= 0x10;                  //使能PWM6信号输出
+		PWMB_CCR6 = Wide;	//设置占空比时间
+        P_SW2 &= ~0x7f;
+        PWMB_ENO |= ENO6P;	//使能PWM6信号输出
     }
 }
 
@@ -312,20 +178,48 @@ void PWM7_SetPwmWide(unsigned short Wide)
 {
     if (Wide == 0)
     {
-        PWMCR &= ~0x20;
+		PWMB_ENO &= ~ENO7P; //禁止输出
         PWM7 = 0;
     }
-    else if (Wide == CYCLE)
+    else if (Wide >= (CYCLE - 1))
     {
-        PWMCR &= ~0x20;
+        PWMB_ENO &= ~ENO7P; //禁止输出
         PWM7 = 1;
     }
     else
     {
         P_SW2 |= 0x80;
-        PWM7T1 = Wide;
-        P_SW2 &= ~0x80;
-        PWMCR |= 0x20;                  //使能PWM7信号输出
+		PWMB_CCR7 = Wide;	//设置占空比时间
+        P_SW2 &= ~0x7f;
+        PWMB_ENO |= ENO7P;	//使能PWM7信号输出
+    }
+}
+
+
+//========================================================================
+// 函数: void PWM8_SetPwmWide(unsigned short Wide)
+// 描述: PWM8配置函数
+// 参数: Wide:反转计数
+// 返回: none.
+//========================================================================
+void PWM8_SetPwmWide(unsigned short Wide)
+{
+    if (Wide == 0)
+    {
+		PWMB_ENO &= ~ENO8P; //禁止输出
+        PWM8 = 0;
+    }
+    else if (Wide >= (CYCLE - 1))
+    {
+        PWMB_ENO &= ~ENO8P; //禁止输出
+        PWM8 = 1;
+    }
+    else
+    {
+        P_SW2 |= 0x80;
+		PWMB_CCR8 = Wide;	//设置占空比时间
+        P_SW2 &= ~0x7f;
+        PWMB_ENO |= ENO8P;	//使能PWM8信号输出
     }
 }
 
