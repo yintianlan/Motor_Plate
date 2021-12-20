@@ -9,9 +9,8 @@
 #include "KeyApp.H"
 
 #include "Delay.H"
-#include "STC8H_PWM.H"
 #include "Public.h"
-#include "MotorDirver.H"
+#include "MotorIO.H"
 #include "Led.H"
 
 
@@ -42,27 +41,29 @@ void KeyVarInit(void)
 
 /*
 ************************************************************************************************************************
-**函数原型:  	void CtlKeyHandle(void)	                    
+**函数原型:  	void UpKeyHandle(void)	                    
 **参数说明:  	无
 **返回值:    	无
-**说明:			电机控制 Key1 处理     				   
+**说明:			上升按键 处理     				   
 ************************************************************************************************************************
 */
-void CtlKeyHandle(void)
+void UpKeyHandle(void)
 {
 	switch (KeyValue) {
 		case 0x0101:			// 键按下处理
 			LedDisplayPrg(KEY_LED, KEY_LED_ON);
 			break;
 		case 0x0201:			// 键弹起处理
-			mtRunCycle = mtRunCycle + (CYCLE/100)*10;//增加占空比
-			if (mtRunCycle > CYCLE) {
-				mtRunCycle = CYCLE;	//PWM直接输出全高电平
-				printf("Warning: Motor Cycle Max!\r\n");
+			if(mtRunDir == CCW) {	//先让电机暂停一下，不然电机会抖动
+				mtRunDir = STOP;
+				Motor_Dir_Set(&sMotorFirst, mtRunDir);
+				DelayMs(2);
 			}
-			printf("Motor Cycle: %d\r\n", mtRunCycle);
-			Motor_Cycle_Set(&sMotorFirst, mtRunCycle);
-			Motor_Cycle_Set(&sMotorSecond, mtRunCycle);
+
+			mtRunDir = CW;
+//			printf("Motor Dir: %02bX\r\n", mtRunDir);
+			printf("Motor Up\r\n");
+			Motor_Dir_Set(&sMotorFirst, mtRunDir);
 			
 			LedDisplayPrg(KEY_LED, KEY_LED_OFF);	// 灭灯
 			break;
@@ -70,10 +71,6 @@ void CtlKeyHandle(void)
 			LedDisplayPrg(KEY_LED, KEY_LED_ON);
 			break;
 		case 0x7001:			// 长按弹起处理
-			mtRunCycle = 0;		//输出全低电平
-			Motor_Cycle_Set(&sMotorFirst, mtRunCycle);
-			Motor_Cycle_Set(&sMotorSecond, mtRunCycle);
-			
 			LedDisplayPrg(KEY_LED, KEY_LED_OFF);	// 灭灯
 			break;
 		default :
@@ -84,27 +81,22 @@ void CtlKeyHandle(void)
 
 /*
 ************************************************************************************************************************
-**函数原型:  	void Ctl2KeyHandle(void)	                    
+**函数原型:  	void PauseKeyHandle(void)	                    
 **参数说明:  	无
 **返回值:    	无
-**说明:			电机控制 Key2 处理     				   
+**说明:			暂停按键 处理     				   
 ************************************************************************************************************************
 */
-void Ctl2KeyHandle(void)
+void PauseKeyHandle(void)
 {
 	switch (KeyValue) {
 		case 0x0102:			// 键按下处理
 			LedDisplayPrg(KEY_LED, KEY_LED_ON);
 			break;
 		case 0x0202:			// 键弹起处理
-			if (mtRunDir < 0x02) {
-				mtRunDir++;
-			} else {
-				mtRunDir = 0;
-			}		
-			printf("Motor Dir: %02bX\r\n", mtRunDir);
+			mtRunDir = STOP;
+			printf("Motor Pause\r\n");
 			Motor_Dir_Set(&sMotorFirst, mtRunDir);
-			Motor_Dir_Set(&sMotorSecond, mtRunDir);
 		
 			LedDisplayPrg(KEY_LED, KEY_LED_OFF);	// 灭灯
 			break;
@@ -122,19 +114,29 @@ void Ctl2KeyHandle(void)
 
 /*
 ************************************************************************************************************************
-**函数原型:  	void Ctl3KeyHandle(void)	                    
+**函数原型:  	void DownKeyHandle(void)	                    
 **参数说明:  	无
 **返回值:    	无
-**说明:			电机控制 Key3 处理     				   
+**说明:			下降按键 处理     				   
 ************************************************************************************************************************
 */
-void Ctl3KeyHandle(void)
+void DownKeyHandle(void)
 {
 	switch (KeyValue) {
 		case 0x0104:			// 键按下处理
 			LedDisplayPrg(KEY_LED, KEY_LED_ON);
 			break;
 		case 0x0204:			// 键弹起处理
+			if(mtRunDir == CW) {	//先让电机暂停一下，不然电机会抖动
+				mtRunDir = STOP;
+				Motor_Dir_Set(&sMotorFirst, mtRunDir);
+				DelayMs(2);
+			}
+		
+			mtRunDir = CCW;
+			printf("Motor Down\r\n");
+			Motor_Dir_Set(&sMotorFirst, mtRunDir);
+
 			LedDisplayPrg(KEY_LED, KEY_LED_OFF);	// 灭灯
 			break;
 		case 0x8004:			// 长按按下处理
@@ -165,34 +167,24 @@ void KeyDealWithPrg(void)
 		case 0x0201:				// 短按按下后弹起,
 		case 0x8001:				// 长按按下，
 		case 0x7001:				// 长按按下后弹起,
-			CtlKeyHandle();
+			UpKeyHandle();
 			break;
 		/*************************** 控制2键处理 ********************************/
 		case 0x0102:
 		case 0x0202:				// 短按按下后弹起,
 		case 0x8002:				// 长按按下，
 		case 0x7002:				// 长按按下后弹起,
-			Ctl2KeyHandle();
+			PauseKeyHandle();
 			break;
 		/*************************** 控制3键处理 ********************************/
 		case 0x0104:
 		case 0x0204:				// 短按按下后弹起,
 		case 0x8004:				// 长按按下，
 		case 0x7004:				// 长按按下后弹起,
-			Ctl3KeyHandle();
+			DownKeyHandle();
 			break;
-		/*************************** 键处理 ********************************/
-		case 0x0120:
-		case 0x0220:				// 短按按下后弹起,
-		case 0x8020:				// 长按按下，
-		case 0x7020:				// 长按按下后弹起,
-			//KeyHandle();
-			break;
+
 		/****************************** 键处理 **********************************/
-		case 0x0240:				// 短按按下后弹起，
-		case 0x8040:				// 长按按下，
-			//KeyHandle();
-			break;
 		default :
 			//KeyHandle();
 			break;

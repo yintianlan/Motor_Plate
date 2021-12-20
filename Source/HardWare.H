@@ -90,7 +90,9 @@
 #define		LINK_LED_OFF		1
 
 
-// ----------------- 电机运行速度 --------------------------------
+// ----------------- 电机 --------------------------------
+#define		MT_EN_PWM			1	//是否使用PWM控制电机
+
 #define		MT_CYCLE_MAX		(CYCLE - 1)	//最大周期
 #define		MOTOR_CYCLE_1		((MT_CYCLE_MAX/100)*15)	// 15%
 #define		MOTOR_CYCLE_2		((MT_CYCLE_MAX/100)*30)	// 30%

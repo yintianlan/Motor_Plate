@@ -397,11 +397,6 @@
               <FilePath>..\Source\Public.C</FilePath>
             </File>
             <File>
-              <FileName>MotorDirver.C</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Source\MotorDirver.C</FilePath>
-            </File>
-            <File>
               <FileName>KeyApp.C</FileName>
               <FileType>1</FileType>
               <FilePath>..\Source\KeyApp.C</FilePath>
@@ -425,6 +420,11 @@
               <FileName>TravelSwitch.C</FileName>
               <FileType>1</FileType>
               <FilePath>..\Source\TravelSwitch.C</FilePath>
+            </File>
+            <File>
+              <FileName>MotorIO.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Source\MotorIO.C</FilePath>
             </File>
           </Files>
         </Group>
@@ -455,11 +455,6 @@
               <FileName>KeyFunc.C</FileName>
               <FileType>1</FileType>
               <FilePath>..\Source\KeyFunc.C</FilePath>
-            </File>
-            <File>
-              <FileName>STC8H_PWM.C</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Source\STC8H_PWM.C</FilePath>
             </File>
             <File>
               <FileName>UartFunc.C</FileName>

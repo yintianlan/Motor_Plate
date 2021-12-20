@@ -1,5 +1,5 @@
-#ifndef _MOTOR_DIRVER_H_
-#define	_MOTOR_DIRVER_H_
+#ifndef _MOTOR_IO_H_
+#define	_MOTOR_IO_H_
 
 #include "Typedef.h"
 #include "VariableCfg.H"
@@ -27,6 +27,8 @@
 
 MOTOR_GLOBAL	void MotorGpioInit(void);
 MOTOR_GLOBAL	void MotorVarInit(void);
+	
+	
 MOTOR_GLOBAL	void MotorRunCtl(structMotorUnitInfo *motor);
 MOTOR_GLOBAL	void MotorEnCtl(structMotorUnitInfo *motor);
 
@@ -34,7 +36,5 @@ void  Motor_Dir_Set(structMotorUnitInfo *motor, uchar dir);
 void  Motor_Cycle_Set(structMotorUnitInfo *motor, uint cycle);
 void  Motor_First_Ctl(structMotorUnitInfo *motor);
 void  Motor_Second_Ctl(structMotorUnitInfo *motor);
-
 	
-#endif	
-	
+#endif

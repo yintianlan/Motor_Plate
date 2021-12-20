@@ -199,6 +199,21 @@ typedef struct {
 /************************** UART冲突检测/重发功能的变量 **************************************/
 
 
+/************************** 行程检测的变量 **************************************/
+typedef enum	//行程状态
+{
+	T_ORIGINAL = 0, // 初始状态
+	T_DOWN,			// 最底部
+	T_RISING,		// 上升过程
+	T_UP,			// 最顶部
+	T_DECLINING,	// 下降过程
+}eTravelState;
+
+VARIABLECFG_GLOBAL  bit 	  upTravelFlag;	//上行程
+VARIABLECFG_GLOBAL  bit 	  downTravelFlag;	//下行程
+
+VARIABLECFG_GLOBAL  eTravelState 	data  	currentTravel;	//当前行程状态
+VARIABLECFG_GLOBAL  eTravelState 	data  	previousTravel;	//上一个行程状态
 
 
 /************************** 系统的变量 **************************************/

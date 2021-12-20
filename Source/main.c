@@ -17,12 +17,11 @@
 #include "KeyApp.H"
 #include "TimeBase.H"
 #include "Delay.H"
-#include "MotorDirver.H"
+#include "MotorIO.H"
 #include "AT24C01_02.H"
 #include "SerialApp.H"
 #include "Led.H"
 #include "ADC.H"
-#include "STC8H_PWM.H"
 #include "TravelSwitch.H"
 
 
@@ -58,7 +57,7 @@ void main(void)
 		if (_testbit_(WdtClrEnaFlag)) {	// Fed Dog
 			Wdt_Init();
 		}
-			
+		
 #if 1
 		/************** 按键检测 **********************************/
 		if (KeyLockStatus == 0x00) {	// 按键没有完全被锁定, 可以扫描
@@ -181,14 +180,8 @@ void SysPwrOnSetup(void)
 
 	
 	//  -------------- 补充功能 --------------------------------
-//	sMotorFirst.Mode = RUN;
-//	sMotorSecond.Mode = RUN;
-//	MotorEnCtl(&sMotorFirst);	//使能驱动电机IC
-//	MotorEnCtl(&sMotorSecond);
-
-	mtRunDir = CW;
+	mtRunDir = STOP;
 	Motor_Dir_Set(&sMotorFirst, mtRunDir);//控制电机转动方向
-	Motor_Dir_Set(&sMotorSecond, mtRunDir);
 }
 
 #endif	/* end define	_VARIABLECFG_GLOBAL_*/
