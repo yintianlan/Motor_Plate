@@ -81,7 +81,7 @@ void main(void)
 //		Read_VoltageValue();			// 读取电压值
 		
 		/************** 外部信号检测 *******************************/
-		TravelSwitchPrg();				//行程开关
+		TravelSwitchPrg();				//行程开关		
 #endif
 		
 	}
@@ -147,6 +147,7 @@ void MainVarInit(void)
 */
 void SoftWareInit(void)
 {
+	TravelVarInit();		//Travel Switch Variable Init
 	MotorVarInit();			// Motor Variable Init
 	KeyVarInit();			// Key Variable Init
 	TimerVarInit();			// Timer Variable Init

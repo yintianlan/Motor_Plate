@@ -26,6 +26,7 @@
 PUBLIC_GLOBAL	void HAL_GPIO_Init(void);
 PUBLIC_GLOBAL	void ResetUserTimer(ulong *Timer);
 PUBLIC_GLOBAL	ulong ReadUserTimer(ulong *Timer);
+PUBLIC_GLOBAL	void OS_Screen_BL_Set(uchar state);
 
 #endif
 	

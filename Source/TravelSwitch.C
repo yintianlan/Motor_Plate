@@ -16,6 +16,22 @@
 #include "Led.H"
 
 
+/*****************************************************************************
+**Name:		 	TravelVarInit
+**Function:	 	行程开关变量初始化
+**Args:		None
+**Return:	None
+******************************************************************************/
+void TravelVarInit(void)
+{
+	TravelFlag 		= TRUE;
+	upTravelFlag 	= FALSE;
+	downTravelFlag	= FALSE;
+	
+	lifterState 	= M_STOP;
+	currentTravel 	= 0x00;
+	previousTravel 	= 0x00;
+}
 
 /*****************************************************************************
 **Name:		 	UpTravelSwitch
@@ -96,6 +112,7 @@ void TravelJudge(void)
 	
 	if( previousTravel != currentTravel) 
 	{
+		TravelFlag = TRUE;
 		previousTravel = currentTravel;//记录前一个状态
 		printf("previousTravel: ");
 		switch(previousTravel){
@@ -119,24 +136,29 @@ void TravelJudge(void)
 void TravelDealWith(uchar state)
 {
 	switch(state) {
-		case T_ORIGINAL:
+		case T_ORIGINAL:	// 初始状态
 				LedDisplayPrg(SYSTEM_LED, LED_W);
+				OS_Screen_BL_Set(XSP_12V_OFF);
 			break;
 
-		case T_DOWN:
+		case T_DOWN:		// 最底部
 				LedDisplayPrg(SYSTEM_LED, LED_W);
+				LifterDirSet(M_STOP);
 			break;
 		
-		case T_RISING:
+		case T_RISING:		// 上升过程
 				LedDisplayPrg(SYSTEM_LED, LED_R);
 			break;
 		
-		case T_UP:
+		case T_UP:			// 最顶部
 				LedDisplayPrg(SYSTEM_LED, LED_B);
+				LifterDirSet(M_STOP);
+				OS_Screen_BL_Set(XSP_12V_ON);
 			break;
 		
-		case T_DECLINING:
+		case T_DECLINING:	// 下降过程
 				LedDisplayPrg(SYSTEM_LED, LED_Y);
+				OS_Screen_BL_Set(XSP_12V_OFF);
 			break;
 				
 		default :
@@ -153,8 +175,11 @@ void TravelDealWith(uchar state)
 ******************************************************************************/
 void TravelSwitchPrg(void)
 {
-	TravelJudge();
-	TravelDealWith(currentTravel);
+	TravelJudge();			// 获取行程开关的状态
+	
+	if (_testbit_(TravelFlag)) {
+		TravelDealWith(currentTravel);
+	}
 }
 
 #endif

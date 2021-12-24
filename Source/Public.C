@@ -87,5 +87,15 @@ ulong ReadUserTimer(ulong *Timer)
 	return (*Timer <= tmp) ? (tmp - *Timer) : (0xFFFFFFFF - tmp + *Timer);
 }
 
+/*****************************************************************************
+**Name:		 	OS_Screen_BL_Set
+**Function:	 	OSÆÁÄ»±³¹â¿ØÖÆ
+**Args:		state: ON/OFF
+**Return:		
+******************************************************************************/
+void OS_Screen_BL_Set(uchar state)
+{
+	IO_XSP = state;
+}
 
 #endif

@@ -120,16 +120,19 @@ void MotorCmdPrg(uchar Cmmd)
 	printf("Motor Cmd: 0x%02bX\r\n", Cmmd);
 	switch (Cmmd) {
 		case 0xCC:			// 统一暂停
+				LifterDirSet(M_STOP);
 			break;
 		
 		case 0xDD:			// 统一上升
+				LifterDirSet(M_RISING);
 			break;
 
 		case 0xEE:			// 统一下降
+				LifterDirSet(M_DECLINING);
 			break;
 		
 		default:
-			break;		
+			break;
 	}
 }
 

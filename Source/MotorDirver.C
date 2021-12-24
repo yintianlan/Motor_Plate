@@ -46,8 +46,6 @@ void MotorVarInit(void)
 	sMotorSecond.Dir = mtRunDir;
 	sMotorSecond.Mode = FREE;
 	sMotorSecond.Cycle = mtRunCycle;
-	
-	lifterState = M_STOP;
 }
 
 

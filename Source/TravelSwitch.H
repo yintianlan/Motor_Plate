@@ -8,6 +8,8 @@
 	#define	TRAVEL_SWITCH_GLOBAL
 #endif
 
+	
+TRAVEL_SWITCH_GLOBAL	void TravelVarInit(void);
 TRAVEL_SWITCH_GLOBAL	void TravelSwitchPrg(void);
 
 
