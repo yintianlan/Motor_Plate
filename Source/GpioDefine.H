@@ -30,8 +30,8 @@
 #define IO_RXD		P30	//log串口RX
 #define IO_TXD		P31	//log串口TX
 
-#define IO_SWITCH1 	P55	//限位开关1
-#define IO_SWITCH2 	P32	//限位开关2
+#define IO_SWITCH1 	P55	//限位开关2
+#define IO_SWITCH2 	P32	//限位开关1
 #define IO_XSP 		P33	//控制12V电压...
 
 #define IO_RS485_EN	P35	//485方向控制

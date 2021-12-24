@@ -17,12 +17,12 @@
 #include "KeyApp.H"
 #include "TimeBase.H"
 #include "Delay.H"
-#include "MotorIO.H"
 #include "AT24C01_02.H"
 #include "SerialApp.H"
 #include "Led.H"
 #include "ADC.H"
 #include "TravelSwitch.H"
+#include "MotorDirver.H"
 
 
 
@@ -180,8 +180,7 @@ void SysPwrOnSetup(void)
 
 	
 	//  -------------- 补充功能 --------------------------------
-	mtRunDir = STOP;
-	Motor_Dir_Set(&sMotorFirst, mtRunDir);//控制电机转动方向
+	LifterDirSet(M_STOP);
 }
 
 #endif	/* end define	_VARIABLECFG_GLOBAL_*/

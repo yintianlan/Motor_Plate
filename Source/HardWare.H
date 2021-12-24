@@ -98,6 +98,7 @@
 #define		MOTOR_CYCLE_2		((MT_CYCLE_MAX/100)*30)	// 30%
 #define		MOTOR_CYCLE_3		((MT_CYCLE_MAX/100)*50)	// 50%
 #define		MOTOR_CYCLE_4		((MT_CYCLE_MAX/100)*75)	// 75%
+#define		MOTOR_CYCLE_5		((MT_CYCLE_MAX/100)*90)	// 90%
 
 
 // ----------------- 485´®¿Ú -------------------------------------

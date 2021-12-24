@@ -10,7 +10,8 @@
 
 #include "Delay.H"
 #include "Public.h"
-#include "MotorIO.H"
+//#include "MotorIO.H"
+#include "MotorDirver.H"
 #include "Led.H"
 
 
@@ -54,16 +55,13 @@ void UpKeyHandle(void)
 			LedDisplayPrg(KEY_LED, KEY_LED_ON);
 			break;
 		case 0x0201:			// 键弹起处理
-			if(mtRunDir == CCW) {	//先让电机暂停一下，不然电机会抖动
-				mtRunDir = STOP;
-				Motor_Dir_Set(&sMotorFirst, mtRunDir);
+			if(lifterState == M_DECLINING) {	//先让电机暂停一下，不然电机会抖动
+				LifterDirSet(M_STOP);
 				DelayMs(2);
 			}
 
-			mtRunDir = CW;
-//			printf("Motor Dir: %02bX\r\n", mtRunDir);
+			LifterDirSet(M_RISING);
 			printf("Motor Up\r\n");
-			Motor_Dir_Set(&sMotorFirst, mtRunDir);
 			
 			LedDisplayPrg(KEY_LED, KEY_LED_OFF);	// 灭灯
 			break;
@@ -94,9 +92,8 @@ void PauseKeyHandle(void)
 			LedDisplayPrg(KEY_LED, KEY_LED_ON);
 			break;
 		case 0x0202:			// 键弹起处理
-			mtRunDir = STOP;
+			LifterDirSet(M_STOP);
 			printf("Motor Pause\r\n");
-			Motor_Dir_Set(&sMotorFirst, mtRunDir);
 		
 			LedDisplayPrg(KEY_LED, KEY_LED_OFF);	// 灭灯
 			break;
@@ -127,16 +124,14 @@ void DownKeyHandle(void)
 			LedDisplayPrg(KEY_LED, KEY_LED_ON);
 			break;
 		case 0x0204:			// 键弹起处理
-			if(mtRunDir == CW) {	//先让电机暂停一下，不然电机会抖动
-				mtRunDir = STOP;
-				Motor_Dir_Set(&sMotorFirst, mtRunDir);
+			if(lifterState == M_RISING) {	//先让电机暂停一下，不然电机会抖动
+				LifterDirSet(M_STOP);
 				DelayMs(2);
 			}
-		
-			mtRunDir = CCW;
-			printf("Motor Down\r\n");
-			Motor_Dir_Set(&sMotorFirst, mtRunDir);
 
+			LifterDirSet(M_DECLINING);
+			printf("Motor Down\r\n");
+			
 			LedDisplayPrg(KEY_LED, KEY_LED_OFF);	// 灭灯
 			break;
 		case 0x8004:			// 长按按下处理

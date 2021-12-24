@@ -202,6 +202,13 @@ typedef struct {
 /************************** 行程检测的变量 **************************************/
 typedef enum	//行程状态
 {
+	M_STOP,			// 最底部
+	M_RISING,		// 上升过程
+	M_DECLINING,	// 下降过程
+}eLifterState;
+
+typedef enum	//行程状态
+{
 	T_ORIGINAL = 0, // 初始状态
 	T_DOWN,			// 最底部
 	T_RISING,		// 上升过程
@@ -212,6 +219,7 @@ typedef enum	//行程状态
 VARIABLECFG_GLOBAL  bit 	  upTravelFlag;	//上行程
 VARIABLECFG_GLOBAL  bit 	  downTravelFlag;	//下行程
 
+VARIABLECFG_GLOBAL  eLifterState 	data  	lifterState;	//升降器运行状态
 VARIABLECFG_GLOBAL  eTravelState 	data  	currentTravel;	//当前行程状态
 VARIABLECFG_GLOBAL  eTravelState 	data  	previousTravel;	//上一个行程状态
 

@@ -421,11 +421,6 @@
               <FileType>1</FileType>
               <FilePath>..\Source\TravelSwitch.C</FilePath>
             </File>
-            <File>
-              <FileName>MotorIO.C</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Source\MotorIO.C</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -465,6 +460,16 @@
               <FileName>ADC.C</FileName>
               <FileType>1</FileType>
               <FilePath>..\Source\ADC.C</FilePath>
+            </File>
+            <File>
+              <FileName>MotorDirver.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Source\MotorDirver.C</FilePath>
+            </File>
+            <File>
+              <FileName>STC8H_PWM.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Source\STC8H_PWM.C</FilePath>
             </File>
           </Files>
         </Group>

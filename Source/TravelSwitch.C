@@ -10,7 +10,9 @@
 #include "VariableCfg.H"
 #include "GpioDefine.H"
 #include "Public.h"
-#include "MotorIO.H"
+//#include "MotorIO.H"
+#include "MotorDirver.H"
+
 #include "Led.H"
 
 
@@ -23,8 +25,18 @@
 ******************************************************************************/
 void UpTravelSwitch(void)	
 {
+	static uchar preUpFlag;
+	
+	upTravelFlag = (IO_SWITCH2 == SWITCH_ON) ? TRUE : FALSE;
+
+	if(preUpFlag != upTravelFlag)
+	{
+		preUpFlag = upTravelFlag;
+		printf("upTravelFlag: %02bX\r\n", preUpFlag);
+	}
+	
 	//电机已到顶部
-	if(IO_SWITCH1 == SWITCH_ON) {
+	if(IO_SWITCH2 == SWITCH_ON) {
 	} else {
 	}
 }
@@ -37,8 +49,18 @@ void UpTravelSwitch(void)
 ******************************************************************************/
 void DownTravelSwitch(void)	
 {
+	static uchar preDownFlag;
+	
+	downTravelFlag = (IO_SWITCH1 == SWITCH_ON) ? TRUE : FALSE;
+	
+	if(preDownFlag != downTravelFlag)
+	{
+		preDownFlag = downTravelFlag;
+		printf("downTravelFlag: %02bX\r\n", preDownFlag);
+	}
+	
 	//电机已到底部
-	if(IO_SWITCH2 == SWITCH_ON) {	
+	if(IO_SWITCH1 == SWITCH_ON) {
 	} else {	
 	}
 }
@@ -51,14 +73,14 @@ void DownTravelSwitch(void)
 ******************************************************************************/
 void TravelJudge(void)
 {
-	upTravelFlag = (IO_SWITCH1 == SWITCH_ON) ? TRUE : FALSE;
-	downTravelFlag = (IO_SWITCH2 == SWITCH_ON) ? TRUE : FALSE;
+	upTravelFlag = (IO_SWITCH2 == SWITCH_ON) ? TRUE : FALSE;
+	downTravelFlag = (IO_SWITCH1 == SWITCH_ON) ? TRUE : FALSE;
 	
 	if( (upTravelFlag == TRUE) && (downTravelFlag != TRUE) )
 	{
 		currentTravel = T_UP;			// 已经到顶部
 	}
-	else if( (upTravelFlag == TRUE) && (downTravelFlag != TRUE) )
+	else if( (upTravelFlag != TRUE) && (downTravelFlag == TRUE) )
 	{
 		currentTravel = T_DOWN;			// 已经到底部
 	}
@@ -75,7 +97,16 @@ void TravelJudge(void)
 	if( previousTravel != currentTravel) 
 	{
 		previousTravel = currentTravel;//记录前一个状态
-		printf("previousTravel: %02bX\r\n", previousTravel);
+		printf("previousTravel: ");
+		switch(previousTravel){
+			case T_ORIGINAL: 	printf("ORIGINAL");break;
+			case T_DOWN: 		printf("DOWN");break;
+			case T_RISING: 		printf("RISING");break;
+			case T_UP:		 	printf("UP");break;
+			case T_DECLINING: 	printf("DECLINING");break;
+			default :			break;
+		}
+		printf("\r\n");
 	}
 }
 
