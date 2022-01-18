@@ -23,6 +23,7 @@
 #include "ADC.H"
 #include "TravelSwitch.H"
 #include "MotorDirver.H"
+#include "Stepper_Motor.H"
 
 
 
@@ -58,7 +59,10 @@ void main(void)
 			Wdt_Init();
 		}
 		
-#if 1
+		//Coil_Test();
+		shun_fun_N();
+		
+#if 0
 		/************** 按键检测 **********************************/
 		if (KeyLockStatus == 0x00) {	// 按键没有完全被锁定, 可以扫描
 			KeyScanPrg();				// 功能键扫描
@@ -115,14 +119,15 @@ void Wdt_Init(void)
 void HardWareInit(void)
 {
 	HAL_GPIO_Init();	//IO初始化
-	MotorGpioInit();	//电机初始化
+//	MotorGpioInit();	//电机初始化
+	Motor_Init();
 	Timer0Init();		// Timer0 Init		 		
 //	Timer1Init();		// Timer1 Init
 	IO_RS485_EN = SEND_OFF;	// 禁止发送
 	InitSerialBaudRate((ulong)(115200));		// Hard Serial Init
 	ADC_Init();		// ADC Init
 	
-	Wdt_Init();	
+//	Wdt_Init();	
 }
 
 /*
@@ -148,7 +153,7 @@ void MainVarInit(void)
 void SoftWareInit(void)
 {
 	TravelVarInit();		//Travel Switch Variable Init
-	MotorVarInit();			// Motor Variable Init
+//	MotorVarInit();			// Motor Variable Init
 	KeyVarInit();			// Key Variable Init
 	TimerVarInit();			// Timer Variable Init
 	SerialVarInit();		// Serial Variable Init
@@ -181,7 +186,7 @@ void SysPwrOnSetup(void)
 
 	
 	//  -------------- 补充功能 --------------------------------
-	LifterDirSet(M_STOP);
+//	LifterDirSet(M_STOP);
 }
 
 #endif	/* end define	_VARIABLECFG_GLOBAL_*/

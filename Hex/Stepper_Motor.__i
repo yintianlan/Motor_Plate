@@ -1,0 +1,1 @@
+"..\Source\Stepper_Motor.C" LARGE OPTIMIZE (8,SPEED) BROWSE INCDIR(..\Source) DEBUG OBJECTEXTEND PRINT(.\Listings\Stepper_Motor.lst) OBJECT(..\Hex\Stepper_Motor.obj)
