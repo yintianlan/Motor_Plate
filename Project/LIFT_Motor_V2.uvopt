@@ -136,7 +136,7 @@
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>0</BreakIfRCount>
-          <Filename>main.c</Filename>
+          <Filename>E:\My_Project\STC\STC8H3K48S2\Stepper_Test\Project\main.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression></Expression>
         </Bp>
@@ -152,7 +152,7 @@
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>Source\STEPPER_MOTOR.C</Filename>
+          <Filename>E:\My_Project\STC\STC8H3K48S2\Stepper_Test\Project\Source\STEPPER_MOTOR.C</Filename>
           <ExecCommand></ExecCommand>
           <Expression></Expression>
         </Bp>
@@ -168,7 +168,7 @@
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>Source\MAIN.C</Filename>
+          <Filename>E:\My_Project\STC\STC8H3K48S2\Stepper_Test\Project\Source\MAIN.C</Filename>
           <ExecCommand></ExecCommand>
           <Expression></Expression>
         </Bp>
