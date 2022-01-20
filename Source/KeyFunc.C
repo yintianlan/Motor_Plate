@@ -26,7 +26,7 @@ ADC读取会有误差，注意添加误差值
 #include <stdio.h>  
 
 #define		ADC_ERROR_RANGE		10	// 误差允许值0.10V
-#define		ADC_KEY_NONE		490	// 无按键时的电压4.90V，以实际为准
+#define		ADC_KEY_NONE		500	// 无按键时的电压5.00V，以实际为准
 
 #define		ADC_KEY1_VAL		460	// 按键1按下时的电压值
 #define		ADC_KEY2_VAL		435	// 按键2按下时的电压值
