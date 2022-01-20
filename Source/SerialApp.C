@@ -124,11 +124,15 @@ void MotorCmdPrg(uchar Cmmd)
 			break;
 		
 		case 0xDD:			// 统一上升
+			if(T_UP != currentTravel) {		//当前电机未到达最顶部，允许电机上升			
 				LifterDirSet(M_RISING);
+			}
 			break;
 
 		case 0xEE:			// 统一下降
+			if(T_DOWN != currentTravel) {		//当前电机未到达最底部，允许电机下降			
 				LifterDirSet(M_DECLINING);
+			}
 			break;
 		
 		default:
