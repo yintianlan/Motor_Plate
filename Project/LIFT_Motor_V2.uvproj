@@ -46,7 +46,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>..\Hex\</OutputDirectory>
-          <OutputName>LIFT_Motor_V2_001</OutputName>
+          <OutputName>Stepper_Motor</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -470,6 +470,11 @@
               <FileName>STC8H_PWM.C</FileName>
               <FileType>1</FileType>
               <FilePath>..\Source\STC8H_PWM.C</FilePath>
+            </File>
+            <File>
+              <FileName>Stepper_Motor.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Source\Stepper_Motor.C</FilePath>
             </File>
           </Files>
         </Group>
