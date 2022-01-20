@@ -43,7 +43,7 @@ void UpTravelSwitch(void)
 {
 	static uchar preUpFlag;
 	
-	upTravelFlag = (IO_SWITCH2 == SWITCH_ON) ? TRUE : FALSE;
+	upTravelFlag = (IO_SWITCH1 == SWITCH_ON) ? TRUE : FALSE;
 
 	if(preUpFlag != upTravelFlag)
 	{
@@ -67,7 +67,7 @@ void DownTravelSwitch(void)
 {
 	static uchar preDownFlag;
 	
-	downTravelFlag = (IO_SWITCH1 == SWITCH_ON) ? TRUE : FALSE;
+	 downTravelFlag = (IO_SWITCH2 == SWITCH_ON) ? TRUE : FALSE;
 	
 	if(preDownFlag != downTravelFlag)
 	{
@@ -89,8 +89,8 @@ void DownTravelSwitch(void)
 ******************************************************************************/
 void TravelJudge(void)
 {
-	upTravelFlag = (IO_SWITCH2 == SWITCH_ON) ? TRUE : FALSE;
-	downTravelFlag = (IO_SWITCH1 == SWITCH_ON) ? TRUE : FALSE;
+	upTravelFlag = (IO_SWITCH1 == SWITCH_ON) ? TRUE : FALSE;
+	downTravelFlag = (IO_SWITCH2 == SWITCH_ON) ? TRUE : FALSE;
 	
 	if( (upTravelFlag == TRUE) && (downTravelFlag != TRUE) )
 	{
