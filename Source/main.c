@@ -67,7 +67,7 @@ void main(void)
 		/************** 按键处理 **********************************/
 		if (_testbit_(KeyOprOkFlag)) {				
 			KeyDealWithPrg();
-		}		
+		}
 
 		/************** 处理串口接收帧 ****************************/
 		if (_testbit_(SerialRcvOkFlag)) {			
@@ -78,7 +78,7 @@ void main(void)
 		LedBlinkPrg();					// LED闪烁
 		
 		/************** ADC电压采样 *******************************/
-//		Read_VoltageValue();			// 读取电压值
+//		Read_VoltageValue();			// 读取电压值，测试ADC功能
 		
 		/************** 外部信号检测 *******************************/
 		TravelSwitchPrg();				//行程开关		

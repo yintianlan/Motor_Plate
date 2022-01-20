@@ -55,13 +55,17 @@ void UpKeyHandle(void)
 			LedDisplayPrg(KEY_LED, KEY_LED_ON);
 			break;
 		case 0x0201:			// 键弹起处理
-			if(lifterState == M_DECLINING) {	//先让电机暂停一下，不然电机会抖动
-				LifterDirSet(M_STOP);
-				DelayMs(2);
-			}
+			if(T_UP != currentTravel) {		//当前电机未到达最顶部，允许电机上升
+				if(lifterState == M_DECLINING) {	//先让电机暂停一下，不然电机会抖动
+					LifterDirSet(M_STOP);
+					DelayMs(2);
+				}
 
-			LifterDirSet(M_RISING);
-			printf("Motor Up\r\n");
+				LifterDirSet(M_RISING);
+				printf("Motor Up\r\n");
+			} else {
+				printf("Arrive at the Top!\r\n");
+			}
 			
 			LedDisplayPrg(KEY_LED, KEY_LED_OFF);	// 灭灯
 			break;
@@ -75,7 +79,6 @@ void UpKeyHandle(void)
 			break;
 	}
 }
-
 
 /*
 ************************************************************************************************************************
@@ -101,7 +104,6 @@ void PauseKeyHandle(void)
 			LedDisplayPrg(KEY_LED, KEY_LED_ON);
 			break;
 		case 0x7002:			// 长按弹起处理
-			
 			LedDisplayPrg(KEY_LED, KEY_LED_OFF);	// 灭灯
 			break;
 		default :
@@ -124,13 +126,17 @@ void DownKeyHandle(void)
 			LedDisplayPrg(KEY_LED, KEY_LED_ON);
 			break;
 		case 0x0204:			// 键弹起处理
-			if(lifterState == M_RISING) {	//先让电机暂停一下，不然电机会抖动
-				LifterDirSet(M_STOP);
-				DelayMs(2);
-			}
+			if(T_DOWN != currentTravel) {		//当前电机未到达最底部，允许电机下降
+				if(lifterState == M_RISING) {	//先让电机暂停一下，不然电机会抖动
+					LifterDirSet(M_STOP);
+					DelayMs(2);
+				}
 
-			LifterDirSet(M_DECLINING);
-			printf("Motor Down\r\n");
+				LifterDirSet(M_DECLINING);
+				printf("Motor Down\r\n");
+			} else {
+				printf("Arrive at the Bottom!\r\n");
+			}
 			
 			LedDisplayPrg(KEY_LED, KEY_LED_OFF);	// 灭灯
 			break;
