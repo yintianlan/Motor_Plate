@@ -1,3 +1,23 @@
+//========================================================================
+// 文件: Stepper_Motor.C
+// 描述: PWM设置脉冲宽度 —— 任意周期和任意占空比DUTY%的PWM
+// 版本: VER1.0
+// 日期: 2021-1-7
+// 备注: 
+//1、步进电机必须加驱动才可以运转，驱动信号必须为脉冲信号，
+//	 没有脉冲的时候，步进电机静止， 如果加入适当的脉冲信号， 
+//	 就会以一定的角度（称为步角）转动。转动的速度和脉冲的频率成正比。
+//
+//2、20BYJ46 12V 驱动的 4 相 5 线的步进电机，而且是减速步进电机，
+//	 减速比为 1:85，步进角为 7.5/85 度。如果需要转动 1 圈，
+//	 那么需要 360/7.5*85 = 4080 个脉冲信号。
+//
+//3、步进电机具有瞬间启动和急速停止的优越特性。
+//
+//4、改变脉冲的顺序， 可以方便的改变转动的方向。
+//========================================================================
+
+
 #include <STC8H.h>
 #include <INTRINS.H>
 
@@ -10,6 +30,7 @@
 #include "Public.h"
 
 
+#if 0
 #define STEP_MOTOR_A_PIN          P20     /*红色*/
 #define STEP_MOTOR_B_PIN          P21     /*橙色*/
 #define STEP_MOTOR_C_PIN          P22     /*黄色*/
@@ -378,11 +399,11 @@ static void step_motor_da_output(void)
 	STEP_MOTOR_C_PIN = LEVEL_L;
 	STEP_MOTOR_D_PIN = LEVEL_H;
 }
+#endif
 
 
 
-
-#if 0
+#if 1
 //电机驱动使能-默认拉高
 #define MT_Port P2	//电机端口
 
@@ -398,9 +419,9 @@ uchar code pulseTable1[] = {0x0c, 0x06, 0x03, 0x09, 0x09, 0x03, 0x06, 0x0c}; // 
 uchar code pulseTable2[] = {0x08, 0x0c, 0x04, 0x06, 0x02, 0x03, 0x01, 0x09,
 						    0x09, 0x01, 0x03, 0x02, 0x06, 0x04, 0x0c, 0x08}; // 一-二相励磁场(一二相交替励磁，旋转角0.9度)
 
-//表格，换算成二进制1000，1100，0100，0110，0010，0011，0001，1001
-//假设P2口输出低4位驱动电机	A, B, _A_, _B_
-//1-2相励磁，发8次脉冲（顺序输出下面表格）转动4步
+////表格，换算成二进制1000，1100，0100，0110，0010，0011，0001，1001
+////假设P2口输出低4位驱动电机	A, B, _A_, _B_
+////1-2相励磁，发8次脉冲（顺序输出下面表格）转动4步
 //unsigned char code BiaoGe[8] = {0x08, 0x0c, 0x04, 0x06, 0x02, 0x03, 0x01, 0x09};
 							
 //表格，换算成二进制0001，0011，0010，0110，0100，1100，1000，1001
@@ -421,10 +442,11 @@ unsigned char code BiaoGe[8] = {0x01, 0x03, 0x02, 0x06, 0x04, 0x0c, 0x08, 0x09};
 #define Coil_OFF 	{Mt4=0;Mt3=0;Mt2=0;Mt1=0;}//全部断电
 #define Coil_ON 	{Mt4=1;Mt3=1;Mt2=1;Mt1=1;}//全部置1
 
-#define		RUN_STRP	(1000)
+#define		RUN_STEP	(4080)		//转动一圈需要的步数
 #define 	Factor 5 // 转速控制常数
 uchar speed = 0, startPos = 0; // 默认正转
-bit oper = 0/*操作数*/, direcFlag = 0; // 初始状态为正向
+bit oper = 0;		/*操作数*/
+bit direcFlag = 0; // 初始状态为正向
 
 //电机初始化
 void Motor_Init(void)
@@ -443,40 +465,40 @@ void Motor_Delay(int delayms)
 }
 
 
-//顺转200步
+//顺转N步
 void shun_N(void)
 {
-	static unsigned int i;
+	unsigned int i;
 	unsigned char n;
 	n = 0;
-	for(i = 0; i < RUN_STRP; i++)		//200步，i/2为实际步数
+	for(i = 0; i < RUN_STEP; i++)		//N步，N/2为实际步数
 	{
 		MT_Port = BiaoGe[n]|0xF0;	//不影响P2其它IO口输出
-		Motor_Delay(3);		
+		Motor_Delay(2);		
 		n = n + 1;
 		if(n > 7) n = 0;
 	}
 	MT_Port &= 0xF0;			//保证电机绕组断电
 }
 
-//反转200步
+//反转N步
 void fun_N(void)
 {
-	static unsigned int i;
+	unsigned int i;
 	unsigned char n;
 	n = 8;
-	for(i = 0; i < RUN_STRP; i++)		//200步，i/2为实际步数
+	for(i = 0; i < RUN_STEP; i++)		//N步，N/2为实际步数
 	{
 		n = n - 1;
 		MT_Port = BiaoGe[n]|0xF0;	//不影响P2其它IO口输出
-		Motor_Delay(3);
+		Motor_Delay(2);
 		if(n == 0) n = 8;
 	}
 	MT_Port &= 0xF0;			//保证电机绕组断电
 }
 
 //正反转测试
-//正转200步（180°），等1s，反转200步，等1s
+//正转N步（360°），等1s，反转N步，等1s
 void shun_fun_N(void)
 {
 //	shun_N();
