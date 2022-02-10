@@ -1,6 +1,6 @@
 //========================================================================
 // 文件: 20BYJ46.C
-// 描述: PWM设置脉冲宽度 —— 任意周期和任意占空比DUTY%的PWM
+// 描述: 使用IO口控制步进电机 —— 20BYJ46
 // 版本: VER1.0
 // 日期: 2021-2-10
 // 备注: 
@@ -68,7 +68,7 @@ static void step_motor_rollback_output(uint8 step);
 static void step_motor_foreward(uint8 speed);
 static void step_motor_rollback(uint8 speed);
 
-const control_opt_t control_processors[] = {
+static const control_opt_t control_processors[] = {
 		{ 0, step_motor_a_output },
 		{ 1, step_motor_ab_output },
 		{ 2, step_motor_b_output },
@@ -174,8 +174,10 @@ static void step_motor_foreward(uint8 speed)
 //========================================================================
 static void step_motor_rollback(uint8 speed)
 {
-	if((MotorStepCount++) > 7)
-		MotorStepCount = 0;
+	if(MotorStepCount == 0)
+		MotorStepCount = 7;
+	else
+		MotorStepCount--;
 	step_motor_rollback_output(MotorStepCount);
 	step_motor_delay(speed);
 }
@@ -423,6 +425,8 @@ void step_motor_test(void)
 	
 	//电机驱动测试
 	if(initFlag) {
-		step_motor_drive(STEP_MOTOR_DIRE_FOREWARD, STEP_MOTOR_SPEED);
+		step_motor_drive(STEP_MOTOR_DIRE_FOREWARD, STEP_MOTOR_SPEED);//正转
+		
+		//step_motor_drive(STEP_MOTOR_DIRE_ROLLBACK, 5);//反转
 	}
 }

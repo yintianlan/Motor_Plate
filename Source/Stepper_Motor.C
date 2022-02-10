@@ -30,6 +30,14 @@
 #include "Public.h"
 
 
+//========================================================================
+//========================================================================
+
+#if 0	
+//2021-1-7 4相5线步进电机
+//20BYJ46
+//35BYJ412
+
 //电机驱动使能-默认拉高
 #define MT_Port P2	//电机端口
 
@@ -199,7 +207,6 @@ void execute(void)
 	}
 }
 
-
 //步进电机转动测试
 void Motor_Test(void)
 {	
@@ -212,6 +219,177 @@ void Motor_Test(void)
 	//电机驱动测试
 	if(initFlag == 1) {
 		shun_fun_N();
+	}	
+}
+
+#endif
+
+//========================================================================
+//========================================================================
+#if 0
+//2021-2-10  2相4线步进电机
+//CHW-GW4632-25BY
+bit initFlag = 0;
+
+//电机驱动使能-默认拉高
+#define MT_Port P2	//电机端口
+
+//电机输出通道
+#define MtB 	P23		//B		Yellow
+#define Mt_B 	P22		//_B_	Red
+#define MtA 	P21		//A		Black
+#define Mt_A 	P20		//_A_ 	Blue
+
+
+#define Coil_Seen 		{MtB=1;Mt_B=0;MtA=1;Mt_A=0;}//A、B相通电，其他相断电
+#define Coil_From 		{MtB=1;Mt_B=0;MtA=0;Mt_A=1;}//_A_、B相通电，其他相断电
+#define Coil_Flang 		{MtB=0;Mt_B=1;MtA=0;Mt_A=1;}//_A_、_B_相通电，其他相断电
+#define Coil_Side 		{MtB=0;Mt_B=1;MtA=1;Mt_A=0;}//A、_B_相通电，其他相断电
+
+#define Coil_OFF 	{MtB=0;Mt_B=0;MtA=0;Mt_A=0;}//全部断电
+#define Coil_ON 	{MtB=1;Mt_B=1;MtA=1;Mt_A=1;}//全部置1
+
+
+//电机初始化
+void Motor_Init(void)
+{
+    P2M0 &= ~0x0f;
+    P2M1 &= ~0x0f;
+    P2 &= ~0x0f;                    //设置P2.0/P2.1/P2.2/P2.3电平
+	
+	Coil_OFF;
+}
+
+//延时函数
+void Motor_Delay(int delayms)
+{	
+//	DelayMs(delayms);
+	
+	int i= 0;
+	for(i = 0; i < delayms; i++) {
+		Delay100us();
+	}
+}
+
+//相位测试
+//直接控制IO口，延时一段时间
+void Coil_Test(void)
+{
+	unsigned char Speed;
+	Speed = 15; //调整速度
+	
+	Coil_Seen;
+	Motor_Delay(Speed);
+
+	Coil_From;
+	Motor_Delay(Speed);
+
+	Coil_Flang;
+	Motor_Delay(Speed);
+	
+	Coil_Side;                 //遇到Coil_A1  用{A1=1;B1=0;C1=0;D1=0;}代替
+	Motor_Delay(Speed);      	//改变这个参数可以调整电机转速 ,
+								//数字越小，转速越大,力矩越小
+	
+}
+
+//步进电机转动测试
+void Motor_Test(void)
+{	
+	//初始化电机
+	if (0 == initFlag) {
+		Motor_Init();
+		initFlag = 1;
+	}
+	
+	//电机驱动测试
+	if(initFlag == 1) {
+		Coil_Test();
+	}	
+}
+#endif
+
+
+//========================================================================
+//========================================================================
+
+//2022-2-10 
+//36JXFS30
+bit initFlag = 0;
+
+//电机驱动使能-默认拉高
+#define MT_Port P2	//电机端口
+
+//电机输出通道
+#define Mt_B 	P23		//_B_	YEL
+#define MtB 	P22		//B		RED
+#define Mt_A 	P21		//_A_	ORG
+#define MtA 	P20		//A 	BRN
+
+#define Coil_Seen 		{MtA=1;MtB=1;Mt_A=0;Mt_B=0;}//A、B相通电，其他相断电
+#define Coil_From 		{MtA=0;MtB=1;Mt_A=1;Mt_B=0;}//_A_、B相通电，其他相断电
+#define Coil_Flang 		{MtA=0;MtB=0;Mt_A=1;Mt_B=1;}//_A_、_B_相通电，其他相断电
+#define Coil_Side 		{MtA=1;MtB=0;Mt_A=0;Mt_B=1;}//A、_B_相通电，其他相断电
+
+#define Coil_OFF 	{MtA=0;MtB=0;Mt_A=0;Mt_B=0;}//全部断电
+#define Coil_ON 	{MtA=1;MtB=1;Mt_A=1;Mt_B=1;}//全部置1
+
+
+//电机初始化
+void Motor_Init(void)
+{
+    P2M0 &= ~0x0f;
+    P2M1 &= ~0x0f;
+    P2 &= ~0x0f;                    //设置P2.0/P2.1/P2.2/P2.3电平
+	
+	Coil_OFF;
+}
+
+//延时函数
+void Motor_Delay(int delayms)
+{	
+//	DelayMs(delayms);
+	
+	int i= 0;
+	for(i = 0; i < delayms; i++) {
+		Delay100us();
+	}
+}
+
+//相位测试
+//直接控制IO口，延时一段时间
+void Coil_Test(void)
+{
+	unsigned char Speed;
+	Speed = 20; //调整速度
+	
+	Coil_Seen;
+	Motor_Delay(Speed);
+
+	Coil_From;
+	Motor_Delay(Speed);
+
+	Coil_Flang;
+	Motor_Delay(Speed);
+	
+	Coil_Side;                 //遇到Coil_A1  用{A1=1;B1=0;C1=0;D1=0;}代替
+	Motor_Delay(Speed);      	//改变这个参数可以调整电机转速 ,
+								//数字越小，转速越大,力矩越小
+	
+}
+
+//步进电机转动测试
+void Motor_Test(void)
+{	
+	//初始化电机
+	if (0 == initFlag) {
+		Motor_Init();
+		initFlag = 1;
+	}
+	
+	//电机驱动测试
+	if(initFlag == 1) {
+		Coil_Test();
 	}	
 }
 

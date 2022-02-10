@@ -1,1 +1,0 @@
-"..\Source\main.c" LARGE OPTIMIZE (8,SPEED) BROWSE INCDIR(..\Source) DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) OBJECT(..\Hex\main.obj)

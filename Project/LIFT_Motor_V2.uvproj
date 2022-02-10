@@ -481,6 +481,11 @@
               <FileType>1</FileType>
               <FilePath>..\Source\20BYJ46.C</FilePath>
             </File>
+            <File>
+              <FileName>GW4632_25BY.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Source\GW4632_25BY.C</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
