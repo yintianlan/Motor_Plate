@@ -192,4 +192,4 @@ void KeyDealWithPrg(void)
 	}
 }
 
-#endif	/* end define	_KEYAPP_GLOBAL_*/
+/* end define	_KEYAPP_GLOBAL_*/

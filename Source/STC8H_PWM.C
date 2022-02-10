@@ -223,4 +223,3 @@ void PWM8_SetPwmWide(unsigned short Wide)
     }
 }
 
-#endif

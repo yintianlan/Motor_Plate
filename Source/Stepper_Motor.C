@@ -30,380 +30,6 @@
 #include "Public.h"
 
 
-#if 0
-#define STEP_MOTOR_A_PIN          P20     /*红色*/
-#define STEP_MOTOR_B_PIN          P21     /*橙色*/
-#define STEP_MOTOR_C_PIN          P22     /*黄色*/
-#define STEP_MOTOR_D_PIN          P23     /*粉色*/
-
-#define STEP_MOTOR_SPEED          2		/*步进电机的控制速率*/
-
-#define STEP_MOTOR_DIRE_FOREWARD  1     /*步进电机正向转：顺时针*/
-#define STEP_MOTOR_DIRE_ROLLBACK  2     /*步进电机正向转：逆时针*/
-
-#define	LEVEL_H		1		/*相位电平输出高，这里1为高，ULN2003可能有反向功能*/
-#define	LEVEL_L		0		/*相位电平输出低*/
-
-
-typedef struct {
-	uint8 cmd;
-	void (*processor)(void);
-} control_opt_t;
-
-/*函数声明*/
-static void step_motor_a_output(void);
-static void step_motor_ab_output(void);
-static void step_motor_b_output(void);
-static void step_motor_bc_output(void);
-static void step_motor_c_output(void);
-static void step_motor_cd_output(void);
-static void step_motor_d_output(void);
-static void step_motor_da_output(void);
-static void step_motor_foreward_output(uint8 step);
-static void step_motor_rollback_output(uint8 step);
-static void step_motor_foreward(uint8 speed);
-static void step_motor_rollback(uint8 speed);
-
-const control_opt_t control_processors[] = {
-		{ 0, step_motor_a_output },
-		{ 1, step_motor_ab_output },
-		{ 2, step_motor_b_output },
-		{ 3, step_motor_bc_output },
-		{ 4, step_motor_c_output },
-		{ 5, step_motor_cd_output },
-		{ 6, step_motor_d_output },
-		{ 7, step_motor_da_output },
-};
-
-/*电机相位转动步数计数*/
-static uint8 MotorStepCount = 0;
-
-//========================================================================
-// 简述: 步进电机驱动延时函数
-// 参数: 无
-// 返回: 无
-// 详述: 
-//========================================================================
-static void step_motor_delay(int delayms)
-{	
-	DelayMs(delayms);
-}
-
-//========================================================================
-// 简述: 步进电机驱动初始化
-// 参数: 无
-// 返回: 无
-// 详述: 
-//========================================================================
-void step_motor_init(void)
-{
-    P2M0 &= ~0x0f;
-    P2M1 &= ~0x0f;
-    P2 &= ~0x0f;                    //设置P2.0/P2.1/P2.2/P2.3电平
-	
-	step_motor_stop();				//电机停止
-	OS_Screen_BL_Set(XSP_12V_ON);	//COM端的12V供电脚
-	
-}
-
-//========================================================================
-// 简述: 步进电机驱动
-// 参数: dire：步进电机方向   speed：步进电机转速
-// 返回: 无
-// 详述: 
-//========================================================================
-void step_motor_drive(uint8 dire, uint8 speed)
-{
-   switch(dire)
-	 {
-		 case STEP_MOTOR_DIRE_FOREWARD:
-		 {
-			  step_motor_foreward(speed);
-		    break;
-		 }
-		 case STEP_MOTOR_DIRE_ROLLBACK:
-		 {
-			  step_motor_rollback(speed);
-		    break;
-		 }
-		 default:
-			  break;
-	 }
-}
-
-//========================================================================
-// 简述: 步进电机停止
-// 参数: 无
-// 返回: 无
-// 详述: （ULN2003有反向功能）
-// 注意事项: 步进电机停止后需要使四个相位引脚都为高电平，否则步进电机会发热。
-// 			 因为步进电机公共端为高电平，所有引脚都为高电平就不会产生电流，就不会发热。
-//========================================================================
-void step_motor_stop(void)
-{
-	STEP_MOTOR_A_PIN = LEVEL_H;
-	STEP_MOTOR_B_PIN = LEVEL_H;
-	STEP_MOTOR_C_PIN = LEVEL_H;
-	STEP_MOTOR_D_PIN = LEVEL_H;
-}
-
-//========================================================================
-// 简述: 步进电机正转
-// 参数: 无
-// 返回: 无
-// 详述: 顺时针转
-//========================================================================
-static void step_motor_foreward(uint8 speed)
-{ 
-	if((MotorStepCount++) > 7)
-		MotorStepCount = 0;
-	step_motor_foreward_output(MotorStepCount);
-	step_motor_delay(speed);
-}
-
-//========================================================================
-// 简述: 步进电机反转
-// 参数: 无
-// 返回: 无
-// 详述: 逆时针转
-//========================================================================
-static void step_motor_rollback(uint8 speed)
-{
-	if((MotorStepCount++) > 7)
-		MotorStepCount = 0;
-	step_motor_rollback_output(MotorStepCount);
-	step_motor_delay(speed);
-}
-
-//========================================================================
-// 简述: 步进电机正向输出
-// 参数: 无
-// 返回: 无
-// 详述: 
-//========================================================================
-static void step_motor_foreward_output(uint8 step)
-{
-	control_processors[step].processor();	//使用函数指针的方式
-	
-//   switch(step)
-//	 {
-//		 case 0:
-//		 {
-//			  step_motor_a_output();
-//		    break;
-//		 }
-//		 case 1:
-//		 {
-//			  step_motor_ab_output();
-//		    break;
-//		 }
-//		 case 2:
-//		 {
-//			  step_motor_b_output();
-//		    break;
-//		 }
-//		 case 3:
-//		 {
-//			  step_motor_bc_output();
-//		    break;
-//		 }
-//		 case 4:
-//		 {
-//			  step_motor_c_output();
-//		    break;
-//		 }
-//		 case 5:
-//		 {
-//			  step_motor_cd_output();
-//		    break;
-//		 }
-//		 case 6:
-//		 {
-//			  step_motor_d_output();
-//		    break;
-//		 }
-//		 case 7:
-//		 {
-//			  step_motor_da_output();
-//		    break;
-//		 }
-//		 default:
-//			  break;
-//	 }
-}
-
-//========================================================================
-// 简述: 步进电机反向输出
-// 参数: 无
-// 返回: 无
-// 详述: 
-//========================================================================
-static void step_motor_rollback_output(uint8 step)
-{
-	control_processors[step].processor();	//使用函数指针的方式
-
-//   switch(step)
-//	 {
-//		 case 0:
-//		 {
-//			  step_motor_a_output();
-//		    break;
-//		 }
-//		 case 1:
-//		 {
-//			  step_motor_da_output();
-//		    break;
-//		 }
-//		 case 2:
-//		 {
-//			  step_motor_d_output();
-//		    break;
-//		 }
-//		 case 3:
-//		 {
-//			  step_motor_cd_output();
-//		    break;
-//		 }
-//		 case 4:
-//		 {
-//			  step_motor_c_output();
-//		    break;
-//		 }
-//		 case 5:
-//		 {
-//			  step_motor_bc_output();
-//		    break;
-//		 }
-//		 case 6:
-//		 {
-//			  step_motor_b_output();
-//		    break;
-//		 }
-//		 case 7:
-//		 {
-//			  step_motor_ab_output();
-//		    break;
-//		 }
-//		 default:
-//			  break;
-//	 }
-}
-
-//========================================================================
-// 简述: 步进电机引脚控制
-// 参数: 无
-// 返回: 无
-// 详述: 步进电机A相输出（ULN2003有反向功能）
-//========================================================================
-static void step_motor_a_output(void)
-{
-	STEP_MOTOR_A_PIN = LEVEL_H;
-	STEP_MOTOR_B_PIN = LEVEL_L;
-	STEP_MOTOR_C_PIN = LEVEL_L;
-	STEP_MOTOR_D_PIN = LEVEL_L;
-}
-
-//========================================================================
-// 简述: 步进电机引脚控制
-// 参数: 无
-// 返回: 无
-// 详述: 步进电机AB相输出（ULN2003有反向功能）
-//========================================================================
-static void step_motor_ab_output(void)
-{
-	STEP_MOTOR_A_PIN = LEVEL_H;
-	STEP_MOTOR_B_PIN = LEVEL_H;
-	STEP_MOTOR_C_PIN = LEVEL_L;
-	STEP_MOTOR_D_PIN = LEVEL_L;
-}
-
-//========================================================================
-// 简述: 步进电机引脚控制
-// 参数: 无
-// 返回: 无
-// 详述: 步进电机B相输出（ULN2003有反向功能）
-//========================================================================
-static void step_motor_b_output(void)
-{
-	STEP_MOTOR_A_PIN = LEVEL_L;
-	STEP_MOTOR_B_PIN = LEVEL_H;
-	STEP_MOTOR_C_PIN = LEVEL_L;
-	STEP_MOTOR_D_PIN = LEVEL_L;
-}
-
-//========================================================================
-// 简述: 步进电机引脚控制
-// 参数: 无
-// 返回: 无
-// 详述: 步进电机BC相输出（ULN2003有反向功能）
-//========================================================================
-static void step_motor_bc_output(void)
-{
-	STEP_MOTOR_A_PIN = LEVEL_L;
-	STEP_MOTOR_B_PIN = LEVEL_H;
-	STEP_MOTOR_C_PIN = LEVEL_H;
-	STEP_MOTOR_D_PIN = LEVEL_L;
-}
-//========================================================================
-// 简述: 步进电机引脚控制
-// 参数: 无
-// 返回: 无
-// 详述: 步进电机C相输出（ULN2003有反向功能）
-//========================================================================
-static void step_motor_c_output(void)
-{
-	STEP_MOTOR_A_PIN = LEVEL_L;
-	STEP_MOTOR_B_PIN = LEVEL_L;
-	STEP_MOTOR_C_PIN = LEVEL_H;
-	STEP_MOTOR_D_PIN = LEVEL_L;
-}
-
-//========================================================================
-// 简述: 步进电机引脚控制
-// 参数: 无
-// 返回: 无
-// 详述: 步进电机CD相输出（ULN2003有反向功能）
-//========================================================================
-static void step_motor_cd_output(void)
-{
-	STEP_MOTOR_A_PIN = LEVEL_L;
-	STEP_MOTOR_B_PIN = LEVEL_L;
-	STEP_MOTOR_C_PIN = LEVEL_H;
-	STEP_MOTOR_D_PIN = LEVEL_H;
-}
-
-//========================================================================
-// 简述: 步进电机引脚控制
-// 参数: 无
-// 返回: 无
-// 详述: 步进电机D相输出（ULN2003有反向功能）
-//========================================================================
-static void step_motor_d_output(void)
-{
-	STEP_MOTOR_A_PIN = LEVEL_L;
-	STEP_MOTOR_B_PIN = LEVEL_L;
-	STEP_MOTOR_C_PIN = LEVEL_L;
-	STEP_MOTOR_D_PIN = LEVEL_H;
-}
-
-//========================================================================
-// 简述: 步进电机引脚控制
-// 参数: 无
-// 返回: 无
-// 详述: 步进电机DA相输出（ULN2003有反向功能）
-//========================================================================
-static void step_motor_da_output(void)
-{
-	STEP_MOTOR_A_PIN = LEVEL_H;
-	STEP_MOTOR_B_PIN = LEVEL_L;
-	STEP_MOTOR_C_PIN = LEVEL_L;
-	STEP_MOTOR_D_PIN = LEVEL_H;
-}
-#endif
-
-
-
-#if 1
 //电机驱动使能-默认拉高
 #define MT_Port P2	//电机端口
 
@@ -447,6 +73,8 @@ unsigned char code BiaoGe[8] = {0x01, 0x03, 0x02, 0x06, 0x04, 0x0c, 0x08, 0x09};
 uchar speed = 0, startPos = 0; // 默认正转
 bit oper = 0;		/*操作数*/
 bit direcFlag = 0; // 初始状态为正向
+bit initFlag = 0;
+
 
 //电机初始化
 void Motor_Init(void)
@@ -459,6 +87,7 @@ void Motor_Init(void)
 	OS_Screen_BL_Set(XSP_12V_ON);
 }
 
+//延时函数
 void Motor_Delay(int delayms)
 {	
 	DelayMs(delayms);
@@ -474,7 +103,7 @@ void shun_N(void)
 	for(i = 0; i < RUN_STEP; i++)		//N步，N/2为实际步数
 	{
 		MT_Port = BiaoGe[n]|0xF0;	//不影响P2其它IO口输出
-		Motor_Delay(2);		
+		Motor_Delay(2);
 		n = n + 1;
 		if(n > 7) n = 0;
 	}
@@ -506,7 +135,7 @@ void shun_fun_N(void)
 //	fun_N();
 //	DelayMs(1000);
 	
-	static ulong tTimer;
+	static ulong tTimer = 0;
 	
 	if( (direcFlag == 0) && (ReadUserTimer(&tTimer) >= 1000))
 	{
@@ -569,5 +198,20 @@ void execute(void)
 		} 
 	}
 }
-#endif
+
+
+//步进电机转动测试
+void Motor_Test(void)
+{	
+	//初始化电机
+	if (0 == initFlag) {
+		Motor_Init();
+		initFlag = 1;
+	}
+	
+	//电机驱动测试
+	if(initFlag == 1) {
+		shun_fun_N();
+	}	
+}
 

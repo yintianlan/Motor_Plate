@@ -476,6 +476,11 @@
               <FileType>1</FileType>
               <FilePath>..\Source\Stepper_Motor.C</FilePath>
             </File>
+            <File>
+              <FileName>20BYJ46.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Source\20BYJ46.C</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

@@ -161,4 +161,3 @@ void U2IRQ(void)interrupt UART2_INTR
 	}
 }
 
-#endif

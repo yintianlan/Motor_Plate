@@ -23,8 +23,9 @@
 #include "ADC.H"
 #include "TravelSwitch.H"
 #include "MotorDirver.H"
-#include "Stepper_Motor.H"
 
+#include "Stepper_Motor.H"
+#include "20BYJ46.H"
 
 
 void Wdt_Init(void);
@@ -59,8 +60,7 @@ void main(void)
 			Wdt_Init();
 		}
 		
-		shun_fun_N();
-		//step_motor_drive(1,5);
+		Motor_Test();
 		
 #if 0
 		/************** 按键检测 **********************************/
@@ -120,8 +120,6 @@ void HardWareInit(void)
 {
 	HAL_GPIO_Init();	//IO初始化
 //	MotorGpioInit();	//电机初始化
-	Motor_Init();
-//	step_motor_init();
 	Timer0Init();		// Timer0 Init		 		
 //	Timer1Init();		// Timer1 Init
 	IO_RS485_EN = SEND_OFF;	// 禁止发送
@@ -190,4 +188,4 @@ void SysPwrOnSetup(void)
 //	LifterDirSet(M_STOP);
 }
 
-#endif	/* end define	_VARIABLECFG_GLOBAL_*/
+/* end define	_VARIABLECFG_GLOBAL_*/

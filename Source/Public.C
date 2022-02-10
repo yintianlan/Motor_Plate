@@ -98,4 +98,3 @@ void OS_Screen_BL_Set(uchar state)
 	IO_XSP = state;
 }
 
-#endif

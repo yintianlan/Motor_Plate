@@ -242,4 +242,3 @@ void Read_VoltageValue(void)
 	
 }
 
-#endif

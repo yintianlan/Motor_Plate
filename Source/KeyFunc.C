@@ -231,4 +231,4 @@ void KeyScanPrg(void)
 	}
 }
 
-#endif	/* end define	_KEYFUNC_GLOBAL_*/
+/* end define	_KEYFUNC_GLOBAL_*/
