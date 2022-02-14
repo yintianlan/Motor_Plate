@@ -314,17 +314,28 @@ void Motor_Test(void)
 //========================================================================
 
 //2022-2-10 
-//36JXFS30
+//36JXFS30K3.7G80,35减速箱
+//20HD3401-05,丝杆电机
+//该型号电机无规格书，测试发现每一相位至少0.7ms以上才能启动，且延时超过1.2ms就会出现丢步现象
+
 bit initFlag = 0;
 
 //电机驱动使能-默认拉高
 #define MT_Port P2	//电机端口
 
 //电机输出通道
+//36JXFS30K3.7G80
 #define Mt_B 	P23		//_B_	YEL
 #define MtB 	P22		//B		RED
 #define Mt_A 	P21		//_A_	ORG
 #define MtA 	P20		//A 	BRN
+
+////20HD3401-05
+//#define Mt_B 	P23		//_B_	BLU
+//#define MtB 	P22		//B		RED
+//#define Mt_A 	P21		//_A_	GRN
+//#define MtA 	P20		//A 	BLK
+
 
 #define Coil_Seen 		{MtA=1;MtB=1;Mt_A=0;Mt_B=0;}//A、B相通电，其他相断电
 #define Coil_From 		{MtA=0;MtB=1;Mt_A=1;Mt_B=0;}//_A_、B相通电，其他相断电
@@ -361,7 +372,7 @@ void Motor_Delay(int delayms)
 void Coil_Test(void)
 {
 	unsigned char Speed;
-	Speed = 20; //调整速度
+	Speed = 10; //调整速度
 	
 	Coil_Seen;
 	Motor_Delay(Speed);
@@ -376,6 +387,54 @@ void Coil_Test(void)
 	Motor_Delay(Speed);      	//改变这个参数可以调整电机转速 ,
 								//数字越小，转速越大,力矩越小
 	
+//	Coil_OFF;
+//	DelayMs(500);		//每转动一个步距角，延时一下
+}
+
+//相位测试
+//直接控制IO口，延时一段时间
+void Coil_Test_1(void)
+{
+	unsigned char Speed;
+	Speed = 10; //调整速度
+
+	Coil_Side;                 //遇到Coil_A1  用{A1=1;B1=0;C1=0;D1=0;}代替
+	Motor_Delay(Speed);      	//改变这个参数可以调整电机转速 ,
+								//数字越小，转速越大,力矩越小
+	Coil_Flang;
+	Motor_Delay(Speed);
+
+	Coil_From;
+	Motor_Delay(Speed);
+	
+	Coil_Seen;
+	Motor_Delay(Speed);
+}
+
+//顺转一圈
+void mt_foreward(void)
+{
+	unsigned int i;
+	for(i = 0; i < 200; i++)		//N步，为实际步数
+	{
+		Coil_Test();
+	}
+
+	Coil_OFF;
+	DelayMs(1000);		//每转动一圈，延时一下
+}
+
+//反转一圈
+void mt_rollback(void)
+{
+	unsigned int i;
+	for(i = 0; i < 200; i++)		//N步，为实际步数
+	{
+		Coil_Test_1();
+	}
+
+	Coil_OFF;
+	DelayMs(500);		//每转动一圈，延时一下
 }
 
 //步进电机转动测试
@@ -389,7 +448,10 @@ void Motor_Test(void)
 	
 	//电机驱动测试
 	if(initFlag == 1) {
-		Coil_Test();
+		//Coil_Test();
+		
+		mt_foreward();
+		mt_rollback();
 	}	
 }
 
