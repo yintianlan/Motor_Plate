@@ -62,6 +62,8 @@ void main(void)
 		}
 		
 		Motor_Test();
+		//chw_motor_test();
+		//step_motor_test();
 		
 #if 0
 		/************** °´¼ü¼ì²â **********************************/

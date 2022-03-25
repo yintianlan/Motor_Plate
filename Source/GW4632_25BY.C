@@ -3,6 +3,7 @@
 // 描述: 使用IO口控制步进电机 —— CHW-GW4632-25BY
 // 版本: VER1.0
 // 日期: 2021-2-10
+// 作者: ANE-LQ
 // 备注: 
 //1、步进电机必须加驱动才可以运转，驱动信号必须为脉冲信号，
 //	 没有脉冲的时候，步进电机静止， 如果加入适当的脉冲信号， 
@@ -149,10 +150,12 @@ void chw_motor_stop(void)
 //========================================================================
 static void step_motor_foreward(uint8 speed)
 { 
-	if((MotorStepCount++) > 3)
-		MotorStepCount = 0;
 	step_motor_foreward_output(MotorStepCount);
 	step_motor_delay(speed);
+	
+	MotorStepCount++;
+	if((MotorStepCount) > 3)
+		MotorStepCount = 0;
 }
 
 //========================================================================
@@ -164,9 +167,8 @@ static void step_motor_foreward(uint8 speed)
 static void step_motor_rollback(uint8 speed)
 {
 	if(MotorStepCount == 0)
-		MotorStepCount = 3;
-	else
-		MotorStepCount--;
+		MotorStepCount = 4;
+	MotorStepCount--;
 	step_motor_rollback_output(MotorStepCount);
 	step_motor_delay(speed);
 }

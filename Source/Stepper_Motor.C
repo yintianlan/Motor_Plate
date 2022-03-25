@@ -3,6 +3,7 @@
 // 描述: PWM设置脉冲宽度 —— 任意周期和任意占空比DUTY%的PWM
 // 版本: VER1.0
 // 日期: 2021-1-7
+// 作者: ANE-LQ
 // 备注: 
 //1、步进电机必须加驱动才可以运转，驱动信号必须为脉冲信号，
 //	 没有脉冲的时候，步进电机静止， 如果加入适当的脉冲信号， 
@@ -37,6 +38,7 @@
 //2021-1-7 4相5线步进电机
 //20BYJ46
 //35BYJ412
+//42YF22GN120S-TF0
 
 //电机驱动使能-默认拉高
 #define MT_Port P2	//电机端口
@@ -165,7 +167,7 @@ void shun_fun_N(void)
 void Coil_Test(void)
 {
 	unsigned char Speed;
-	Speed = 5; //调整速度
+	Speed = 3; //调整速度
 	
 	Coil_A1;                 //遇到Coil_A1  用{A1=1;B1=0;C1=0;D1=0;}代替
 	Motor_Delay(Speed);         //改变这个参数可以调整电机转速 ,
@@ -218,7 +220,8 @@ void Motor_Test(void)
 	
 	//电机驱动测试
 	if(initFlag == 1) {
-		shun_fun_N();
+		//shun_fun_N();
+		Coil_Test();
 	}	
 }
 
@@ -312,11 +315,17 @@ void Motor_Test(void)
 
 //========================================================================
 //========================================================================
-
+#if 1
 //2022-2-10 
 //36JXFS30K3.7G80,35减速箱
-//20HD3401-05,丝杆电机
 //该型号电机无规格书，测试发现每一相位至少0.7ms以上才能启动，且延时超过1.2ms就会出现丢步现象
+
+//20HD3401-05,丝杆电机
+//该型号电机无参数，测试发现每一相位至少0.7ms以上才能启动，且延时超过1.2ms就会出现丢步现象
+
+//35HD2401-05,丝杆电机
+//该型号电机无规格书，测试发现每一相位至少2ms以上才能启动，且延时超过1.2ms就会出现丢步现象
+
 
 bit initFlag = 0;
 
@@ -324,17 +333,23 @@ bit initFlag = 0;
 #define MT_Port P2	//电机端口
 
 //电机输出通道
-//36JXFS30K3.7G80
-#define Mt_B 	P23		//_B_	YEL
-#define MtB 	P22		//B		RED
-#define Mt_A 	P21		//_A_	ORG
-#define MtA 	P20		//A 	BRN
+////36JXFS30K3.7G80
+//#define Mt_B 	P23		//_B_	YEL
+//#define MtB 	P22		//B		RED
+//#define Mt_A 	P21		//_A_	ORG
+//#define MtA 	P20		//A 	BRN
 
 ////20HD3401-05
 //#define Mt_B 	P23		//_B_	BLU
 //#define MtB 	P22		//B		RED
 //#define Mt_A 	P21		//_A_	GRN
 //#define MtA 	P20		//A 	BLK
+
+//35HD2401-05
+#define Mt_B 	P23		//_B_	BLU
+#define Mt_A 	P22		//_A_	GRN
+#define MtB 	P21		//B		YEL
+#define MtA 	P20		//A 	RED
 
 
 #define Coil_Seen 		{MtA=1;MtB=1;Mt_A=0;Mt_B=0;}//A、B相通电，其他相断电
@@ -359,12 +374,12 @@ void Motor_Init(void)
 //延时函数
 void Motor_Delay(int delayms)
 {	
-//	DelayMs(delayms);
+	DelayMs(delayms);
 	
-	int i= 0;
-	for(i = 0; i < delayms; i++) {
-		Delay100us();
-	}
+//	int i= 0;
+//	for(i = 0; i < delayms; i++) {
+//		Delay100us();
+//	}
 }
 
 //相位测试
@@ -372,7 +387,7 @@ void Motor_Delay(int delayms)
 void Coil_Test(void)
 {
 	unsigned char Speed;
-	Speed = 10; //调整速度
+	Speed = 1; //调整速度
 	
 	Coil_Seen;
 	Motor_Delay(Speed);
@@ -396,7 +411,7 @@ void Coil_Test(void)
 void Coil_Test_1(void)
 {
 	unsigned char Speed;
-	Speed = 10; //调整速度
+	Speed = 1; //调整速度
 
 	Coil_Side;                 //遇到Coil_A1  用{A1=1;B1=0;C1=0;D1=0;}代替
 	Motor_Delay(Speed);      	//改变这个参数可以调整电机转速 ,
@@ -421,7 +436,7 @@ void mt_foreward(void)
 	}
 
 	Coil_OFF;
-	DelayMs(1000);		//每转动一圈，延时一下
+//	DelayMs(1000);		//每转动一圈，延时一下
 }
 
 //反转一圈
@@ -434,7 +449,33 @@ void mt_rollback(void)
 	}
 
 	Coil_OFF;
-	DelayMs(500);		//每转动一圈，延时一下
+//	DelayMs(500);		//每转动一圈，延时一下
+}
+
+
+void shun_fun_N(void)
+{
+	static ulong tTimer = 0;
+	static bit direcFlag = 0; // 初始状态为正向
+
+	
+	if( (direcFlag == 0))
+	{
+		mt_foreward();
+		if(ReadUserTimer(&tTimer) >= 1000 * 15) {
+			direcFlag = 1;
+			ResetUserTimer(&tTimer);
+		}
+	}
+	
+	if( (direcFlag == 1))
+	{
+		mt_rollback();
+		if(ReadUserTimer(&tTimer) >= 1000 * 15) {
+			direcFlag = 0;
+			ResetUserTimer(&tTimer);
+		}
+	}	
 }
 
 //步进电机转动测试
@@ -448,10 +489,10 @@ void Motor_Test(void)
 	
 	//电机驱动测试
 	if(initFlag == 1) {
-		//Coil_Test();
+		shun_fun_N();
 		
-		mt_foreward();
-		mt_rollback();
+		//Coil_Test();
+		//Coil_Test_1();
 	}	
 }
-
+#endif
