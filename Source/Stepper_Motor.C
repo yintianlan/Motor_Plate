@@ -326,8 +326,17 @@ void Motor_Test(void)
 //35HD2401-05,丝杆电机
 //该型号电机无规格书，测试发现每一相位至少2ms以上才能启动，且延时超过1.2ms就会出现丢步现象
 
+//35HD2407-05
+//该型号电机步进角为1.8°，1.2A
+//如果需要转动 1 圈，那么需要 360°/1.8° = 200 个脉冲信号。
+
+//28HD3401-8
+//该型号电机步进角为1.8°，0.67A
+
 
 bit initFlag = 0;
+static ulong tTimer = 0;
+
 
 //电机驱动使能-默认拉高
 #define MT_Port P2	//电机端口
@@ -340,12 +349,15 @@ bit initFlag = 0;
 //#define MtA 	P20		//A 	BRN
 
 ////20HD3401-05
+////28HD3401-8
 //#define Mt_B 	P23		//_B_	BLU
 //#define MtB 	P22		//B		RED
 //#define Mt_A 	P21		//_A_	GRN
 //#define MtA 	P20		//A 	BLK
 
+
 //35HD2401-05
+//35HD2407-05
 #define Mt_B 	P23		//_B_	BLU
 #define Mt_A 	P22		//_A_	GRN
 #define MtB 	P21		//B		YEL
@@ -382,7 +394,7 @@ void Motor_Delay(int delayms)
 //	}
 }
 
-//相位测试
+//相位测试，转动一个步进角
 //直接控制IO口，延时一段时间
 void Coil_Test(void)
 {
@@ -406,7 +418,7 @@ void Coil_Test(void)
 //	DelayMs(500);		//每转动一个步距角，延时一下
 }
 
-//相位测试
+//相位测试，转动一个步进角
 //直接控制IO口，延时一段时间
 void Coil_Test_1(void)
 {
@@ -455,14 +467,13 @@ void mt_rollback(void)
 
 void shun_fun_N(void)
 {
-	static ulong tTimer = 0;
-	static bit direcFlag = 0; // 初始状态为正向
+	static bit direcFlag = 1; // 初始状态为正向
 
 	
 	if( (direcFlag == 0))
 	{
 		mt_foreward();
-		if(ReadUserTimer(&tTimer) >= 1000 * 15) {
+		if(ReadUserTimer(&tTimer) >= 1000 * 5) {
 			direcFlag = 1;
 			ResetUserTimer(&tTimer);
 		}
@@ -471,7 +482,7 @@ void shun_fun_N(void)
 	if( (direcFlag == 1))
 	{
 		mt_rollback();
-		if(ReadUserTimer(&tTimer) >= 1000 * 15) {
+		if(ReadUserTimer(&tTimer) >= 1000 * 5) {
 			direcFlag = 0;
 			ResetUserTimer(&tTimer);
 		}
@@ -485,6 +496,7 @@ void Motor_Test(void)
 	if (0 == initFlag) {
 		Motor_Init();
 		initFlag = 1;
+		ResetUserTimer(&tTimer);
 	}
 	
 	//电机驱动测试
